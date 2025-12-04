@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>OP备份 | XIAOBAI&#39;s BLOG</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content=".vmx 文件 这是虚拟机的配置文件，包含了所有硬件和系统设置。  虚拟磁盘文件（.vmdk） 根据 .vmx 文件中的以下行进行配置：  1scsi0:0.fileName &#x3D; &quot;D:\VMWARES\OPENWRT\openwrt-gdq-v1[2024]-x86-64-generic-squashfs-uefi.img\openwrt-gdq-v1[2024]-x86-64-ge">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OP备份">
+<meta property="og:url" content="http://example.com/%E5%AE%B6%E5%BA%AD%E7%BD%91%E7%BB%9C/Openwrt/OP%E5%A4%87%E4%BB%BD/index.html">
+<meta property="og:site_name" content="XIAOBAI&#39;s BLOG">
+<meta property="og:description" content=".vmx 文件 这是虚拟机的配置文件，包含了所有硬件和系统设置。  虚拟磁盘文件（.vmdk） 根据 .vmx 文件中的以下行进行配置：  1scsi0:0.fileName &#x3D; &quot;D:\VMWARES\OPENWRT\openwrt-gdq-v1[2024]-x86-64-generic-squashfs-uefi.img\openwrt-gdq-v1[2024]-x86-64-ge">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-12-04T06:31:24.250Z">
+<meta property="article:modified_time" content="2025-07-07T08:38:10.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="XIAOBAI's BLOG" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">XIAOBAI&#39;s BLOG</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Welcome to XIAOBAI&#39;s BLOG</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives/">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-家庭网络/Openwrt/OP备份" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/%E5%AE%B6%E5%BA%AD%E7%BD%91%E7%BB%9C/Openwrt/OP%E5%A4%87%E4%BB%BD/" class="article-date">
+  <time class="dt-published" datetime="2025-12-04T06:31:24.250Z" itemprop="datePublished">2025-12-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%B6%E5%BA%AD%E7%BD%91%E7%BB%9C/">家庭网络</a>►<a class="article-category-link" href="/categories/%E5%AE%B6%E5%BA%AD%E7%BD%91%E7%BB%9C/Openwrt/">Openwrt</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      OP备份
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <ol>
+<li><p><strong><code>.vmx</code> 文件</strong><br> 这是虚拟机的配置文件，包含了所有硬件和系统设置。</p>
+</li>
+<li><p><strong>虚拟磁盘文件（<code>.vmdk</code>）</strong><br> 根据 <code>.vmx</code> 文件中的以下行进行配置：</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scsi0:0.fileName = &quot;D:\VMWARES\OPENWRT\openwrt-gdq-v1[2024]-x86-64-generic-squashfs-uefi.img\openwrt-gdq-v1[2024]-x86-64-generic-squashfs-uefi.vmdk&quot;</span><br></pre></td></tr></table></figure>
+<p> 需要更改指定路径 <code>D:\VMWARES\OPENWRT\openwrt-gdq-v1[2024]-x86-64-generic-squashfs-uefi.img\openwrt-gdq-v1[2024]-x86-64-generic-squashfs-uefi.vmdk</code> 中的 <code>.vmdk</code> 文件。</p>
+</li>
+<li><p><strong>其他相关文件（可选）</strong></p>
+<ul>
+<li><p><strong><code>.nvram</code> 文件</strong>：存储虚拟机的 BIOS 设置。根据 <code>.vmx</code> 文件：</p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">    nvram = &quot;OPENWRT.nvram&quot;</span><br><span class="line">    ```     </span><br><span class="line">    如果需要保留 BIOS 设置，也需要备份该文件。</span><br><span class="line">        </span><br><span class="line">- **扩展配置文件（`.vmxf`）**：    如果存在该文件，建议一并备份。</span><br><span class="line">    ```plaintext</span><br><span class="line">    extendedConfigFile = &quot;OPENWRT.vmxf&quot;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>日志文件（<code>.log</code>）</strong>：虽然日志文件不是必须备份的，但可以保留用于排查问题。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>其他可能的文件</strong><br> 如果虚拟机使用了快照功能，还需要备份以下文件：</p>
+<ul>
+<li><p><strong><code>.vmsd</code> 文件</strong>：存储快照信息。</p>
+</li>
+<li><p><strong><code>.vmss</code> 文件</strong>：存储虚拟机的挂起状态。</p>
+</li>
+</ul>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/%E5%AE%B6%E5%BA%AD%E7%BD%91%E7%BB%9C/Openwrt/OP%E5%A4%87%E4%BB%BD/" data-id="cuidUey5b6l-YIhzkaQwtgkXp" data-title="OP备份" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/%E5%AE%B6%E5%BA%AD%E7%BD%91%E7%BB%9C/Openwrt/Openwrt/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">Openwrt</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%B6%E5%BA%AD%E7%BD%91%E7%BB%9C/">家庭网络</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%B6%E5%BA%AD%E7%BD%91%E7%BB%9C/Openwrt/">Openwrt</a></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/%E5%AE%B6%E5%BA%AD%E7%BD%91%E7%BB%9C/Openwrt/OP%E5%A4%87%E4%BB%BD/">OP备份</a>
+          </li>
+        
+          <li>
+            <a href="/%E5%AE%B6%E5%BA%AD%E7%BD%91%E7%BB%9C/Openwrt/Openwrt/">Openwrt</a>
+          </li>
+        
+          <li>
+            <a href="/%E7%9B%AE%E5%BD%95/">目录</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives/" class="mobile-nav-link">归档</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
