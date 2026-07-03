@@ -1,0 +1,380 @@
+{
+  "source": "workflow\\get_place_resource - 工作流 -智能体平台.html",
+  "nodes": [
+    {
+      "id": "100001",
+      "type": "node",
+      "kind": "start",
+      "x": 0.0,
+      "y": 224.2,
+      "z": 9,
+      "title": "开始",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "▶",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "place",
+              "type": "str"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 43.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "900001",
+      "type": "node",
+      "kind": "end",
+      "x": 1380.0,
+      "y": 211.2,
+      "z": 10,
+      "title": "结束",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "✓",
+      "sections": [
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出类型",
+          "items": [
+            {
+              "name": "返回变量"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "172146",
+      "type": "node",
+      "kind": "llm",
+      "x": 920.0,
+      "y": 185.2,
+      "z": 11,
+      "title": "大模型",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "✦",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "nature_info",
+              "type": "{}"
+            },
+            {
+              "name": "tour_info",
+              "type": "{}"
+            },
+            {
+              "name": "bus_info",
+              "type": "{}"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "模型",
+          "items": [
+            {
+              "name": "豆包·1.5·Pro·32k"
+            }
+          ]
+        },
+        {
+          "label": "技能",
+          "items": [
+            {
+              "name": "未配置技能"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 82.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 82.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "134283",
+      "type": "node",
+      "kind": "processor",
+      "x": 460.0,
+      "y": -31.8051,
+      "z": 12,
+      "title": "自然",
+      "description": "",
+      "headerBg": "#ebf9f0",
+      "icon": "◇",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "place",
+              "type": "str"
+            },
+            {
+              "name": "type",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "outputList",
+              "type": "{}"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "1614209",
+      "type": "node",
+      "kind": "processor",
+      "x": 460.0,
+      "y": 211.2,
+      "z": 13,
+      "title": "旅游",
+      "description": "",
+      "headerBg": "#ebf9f0",
+      "icon": "◇",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "place",
+              "type": "str"
+            },
+            {
+              "name": "type",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "outputList",
+              "type": "{}"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "155928",
+      "type": "node",
+      "kind": "processor",
+      "x": 460.0,
+      "y": 422.4,
+      "z": 14,
+      "title": "商业",
+      "description": "",
+      "headerBg": "#ebf9f0",
+      "icon": "◇",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "place",
+              "type": "str"
+            },
+            {
+              "name": "type",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "outputList",
+              "type": "{}"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "x": 348.0,
+      "y": 11.8449,
+      "width": 124.0,
+      "height": 267.05508342967585,
+      "paths": [
+        "M22 255.05508342967582 C 62 255.05508342967582,62 12, 102 12",
+        "M 96,6 L 102,12 L 96,18"
+      ]
+    },
+    {
+      "id": "e2",
+      "x": 348.0,
+      "y": 254.85,
+      "width": 124.0,
+      "height": 24.05000000000001,
+      "paths": [
+        "M22 12.050000000000011 C 62 12.050000000000011,62 12, 102 12",
+        "M 96,6 L 102,12 L 96,18"
+      ]
+    },
+    {
+      "id": "e3",
+      "x": 348.0,
+      "y": 254.9,
+      "width": 124.0,
+      "height": 235.14999999999992,
+      "paths": [
+        "M22 12 C 62 12,62 223.14999999999992, 102 223.14999999999992",
+        "M 96,217.14999999999992 L 102,223.14999999999992 L 96,229.14999999999992"
+      ]
+    },
+    {
+      "id": "e4",
+      "x": 1268.0,
+      "y": 254.85,
+      "width": 124.0,
+      "height": 24.05000000000001,
+      "paths": [
+        "M22 12 C 62 12,62 12.050000000000011, 102 12.050000000000011",
+        "M 96,6.050000000000011 L 102,12.050000000000011 L 96,18.05000000000001"
+      ]
+    },
+    {
+      "id": "e5",
+      "x": 808.0,
+      "y": 11.8449,
+      "width": 124.0,
+      "height": 267.0050834296758,
+      "paths": [
+        "M22 12 C 62 12,62 255.0050834296758, 102 255.0050834296758",
+        "M 96,249.0050834296758 L 102,255.0050834296758 L 96,261.0050834296758"
+      ]
+    },
+    {
+      "id": "e6",
+      "x": 808.0,
+      "y": 254.85,
+      "width": 124.0,
+      "height": 24.0,
+      "paths": [
+        "M22 12 C 62 12,62 12, 102 12",
+        "M 96,6 L 102,12 L 96,18"
+      ]
+    },
+    {
+      "id": "e7",
+      "x": 808.0,
+      "y": 254.85,
+      "width": 124.0,
+      "height": 235.19999999999993,
+      "paths": [
+        "M22 223.19999999999993 C 62 223.19999999999993,62 12, 102 12",
+        "M 96,6 L 102,12 L 96,18"
+      ]
+    }
+  ],
+  "bounds": {
+    "minX": 0.0,
+    "minY": -31.8051,
+    "width": 1820.0,
+    "height": 652.2051
+  }
+}

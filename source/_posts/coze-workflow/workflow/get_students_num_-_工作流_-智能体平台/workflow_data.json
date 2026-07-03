@@ -1,0 +1,232 @@
+{
+  "source": "workflow\\get_students_num - 工作流 -智能体平台.html",
+  "nodes": [
+    {
+      "id": "100001",
+      "type": "node",
+      "kind": "start",
+      "x": 0.0,
+      "y": 39.0,
+      "z": 9,
+      "title": "开始",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "▶",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "school_list",
+              "type": "str[]"
+            },
+            {
+              "name": "type",
+              "type": "str"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 43.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "900001",
+      "type": "node",
+      "kind": "end",
+      "x": 1380.0,
+      "y": 26.0,
+      "z": 10,
+      "title": "结束",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "✓",
+      "sections": [
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出类型",
+          "items": [
+            {
+              "name": "返回变量"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "132746",
+      "type": "node",
+      "kind": "processor",
+      "x": 920.0,
+      "y": 26.0,
+      "z": 11,
+      "title": "文本处理_1",
+      "description": "",
+      "headerBg": "#eef4fe",
+      "icon": "◇",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "String1",
+              "type": "{}"
+            },
+            {
+              "name": "String2",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "1017090",
+      "type": "node",
+      "kind": "llm",
+      "x": 460.0,
+      "y": 0.0,
+      "z": 12,
+      "title": "students数量",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "✦",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "school_name",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "outputList",
+              "type": "{}"
+            }
+          ]
+        },
+        {
+          "label": "模型",
+          "items": [
+            {
+              "name": "豆包·1.5·Pro·32k"
+            }
+          ]
+        },
+        {
+          "label": "技能",
+          "items": [
+            {
+              "name": "WebPilot"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 82.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 82.0,
+          "linked": true
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "x": 348.0,
+      "y": 69.65,
+      "width": 124.0,
+      "height": 24.049999999999983,
+      "paths": [
+        "M22 12.049999999999983 C 62 12.049999999999983,62 12, 102 12",
+        "M 96,6 L 102,12 L 96,18"
+      ]
+    },
+    {
+      "id": "e2",
+      "x": 1268.0,
+      "y": 69.65,
+      "width": 124.0,
+      "height": 24.049999999999997,
+      "paths": [
+        "M22 12 C 62 12,62 12.049999999999997, 102 12.049999999999997",
+        "M 96,6.049999999999997 L 102,12.049999999999997 L 96,18.049999999999997"
+      ]
+    },
+    {
+      "id": "e3",
+      "x": 808.0,
+      "y": 69.65,
+      "width": 124.0,
+      "height": 24.000000000000014,
+      "paths": [
+        "M22 12.000000000000014 C 62 12.000000000000014,62 12, 102 12",
+        "M 96,6 L 102,12 L 96,18"
+      ]
+    }
+  ],
+  "bounds": {
+    "minX": 0.0,
+    "minY": 0.0,
+    "width": 1820.0,
+    "height": 246.0
+  }
+}

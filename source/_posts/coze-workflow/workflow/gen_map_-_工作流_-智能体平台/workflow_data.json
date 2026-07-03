@@ -1,0 +1,296 @@
+{
+  "source": "workflow\\gen_map - 工作流 -智能体平台.html",
+  "nodes": [
+    {
+      "id": "100001",
+      "type": "node",
+      "kind": "start",
+      "x": 0.0,
+      "y": 25.0,
+      "z": 9,
+      "title": "开始",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "▶",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "Json_map",
+              "type": "{}"
+            },
+            {
+              "name": "center_name",
+              "type": "str"
+            },
+            {
+              "name": "center_lat",
+              "type": "num"
+            },
+            {
+              "name": "center_lng",
+              "type": "num"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 43.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "900001",
+      "type": "node",
+      "kind": "end",
+      "x": 1840.0,
+      "y": 12.0,
+      "z": 10,
+      "title": "结束",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "✓",
+      "sections": [
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出类型",
+          "items": [
+            {
+              "name": "返回变量"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "154462",
+      "type": "node",
+      "kind": "processor",
+      "x": 920.0,
+      "y": 0.0,
+      "z": 11,
+      "title": "HTTP 请求",
+      "description": "",
+      "headerBg": "#eef4fe",
+      "icon": "◇",
+      "sections": [
+        {
+          "label": "POST",
+          "items": [
+            {
+              "name": "https://<域名地址暂时不可用>:7000/api/v1/generate-map"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "body",
+              "type": "str"
+            },
+            {
+              "name": "statusCode",
+              "type": "number_int"
+            },
+            {
+              "name": "headers",
+              "type": "str"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 68.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 68.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "190284",
+      "type": "node",
+      "kind": "processor",
+      "x": 1380.0,
+      "y": 12.0,
+      "z": 12,
+      "title": "JSON 反序列化",
+      "description": "",
+      "headerBg": "#fef9eb",
+      "icon": "◇",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "input",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "brace"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "147719",
+      "type": "node",
+      "kind": "processor",
+      "x": 460.0,
+      "y": 12.0,
+      "z": 13,
+      "title": "组合地图json",
+      "description": "",
+      "headerBg": "#ebf9f9",
+      "icon": "◇",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "Json_map",
+              "type": "{}"
+            },
+            {
+              "name": "center_name",
+              "type": "str"
+            },
+            {
+              "name": "center_lat",
+              "type": "num"
+            },
+            {
+              "name": "center_lng",
+              "type": "num"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "x": 348.0,
+      "y": 55.65,
+      "width": 124.0,
+      "height": 24.049999999999997,
+      "paths": [
+        "M22 12.049999999999997 C 62 12.049999999999997,62 12, 102 12",
+        "M 96,6 L 102,12 L 96,18"
+      ]
+    },
+    {
+      "id": "e2",
+      "x": 1728.0,
+      "y": 55.65,
+      "width": 124.0,
+      "height": 24.049999999999997,
+      "paths": [
+        "M22 12 C 62 12,62 12.049999999999997, 102 12.049999999999997",
+        "M 96,6.049999999999997 L 102,12.049999999999997 L 96,18.049999999999997"
+      ]
+    },
+    {
+      "id": "e3",
+      "x": 808.0,
+      "y": 55.65,
+      "width": 124.0,
+      "height": 24.05000000000001,
+      "paths": [
+        "M22 12 C 62 12,62 12.050000000000011, 102 12.050000000000011",
+        "M 96,6.050000000000011 L 102,12.050000000000011 L 96,18.05000000000001"
+      ]
+    },
+    {
+      "id": "e4",
+      "x": 1268.0,
+      "y": 55.65,
+      "width": 124.0,
+      "height": 24.05000000000001,
+      "paths": [
+        "M22 12.050000000000011 C 62 12.050000000000011,62 12, 102 12",
+        "M 96,6 L 102,12 L 96,18"
+      ]
+    }
+  ],
+  "bounds": {
+    "minX": 0.0,
+    "minY": 0.0,
+    "width": 2280.0,
+    "height": 234.0
+  }
+}

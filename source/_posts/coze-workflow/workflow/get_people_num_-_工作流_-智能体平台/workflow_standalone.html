@@ -1,0 +1,333 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>工作流精简还原 - get_people_num - 工作流 -智能体平台</title><style>
+:root{--bg:#f7f8fc;--dot:#dfe4f3;--text:rgba(6,7,9,.82);--muted:rgba(6,7,9,.48);--line:#5f67ff;--node-border:rgba(29,31,37,.09);--chip-bg:#f4f5fb;--chip-border:rgba(29,31,37,.08);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text)}
+#viewport{position:fixed;inset:0;overflow:hidden;cursor:grab;background-color:var(--bg);background-image:radial-gradient(var(--dot) .8px,transparent .8px);background-size:24px 24px;touch-action:none;user-select:none}#viewport.dragging{cursor:grabbing}
+#stage{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}.floatbar{position:fixed;z-index:50;right:14px;bottom:14px;display:flex;gap:8px;align-items:center;padding:8px 10px;border:1px solid rgba(29,31,37,.08);border-radius:12px;background:rgba(255,255,255,.92);box-shadow:0 8px 20px rgba(29,31,37,.10);backdrop-filter:blur(10px);font-size:12px;color:var(--muted)}.floatbar button{height:28px;border:1px solid rgba(29,31,37,.10);border-radius:8px;background:#fff;color:var(--text);cursor:pointer;padding:0 9px}.floatbar button:hover{background:#f7f8fc}.help{position:fixed;left:14px;bottom:14px;z-index:50;padding:7px 10px;border:1px solid rgba(29,31,37,.08);border-radius:10px;background:rgba(255,255,255,.88);box-shadow:0 8px 20px rgba(29,31,37,.08);font-size:12px;color:var(--muted);backdrop-filter:blur(10px)}
+.edge{position:absolute;overflow:visible;z-index:7;pointer-events:none}.edge path{fill:none;stroke:var(--line);stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round}.edge-main{filter:drop-shadow(0 1px 0 rgba(255,255,255,.95))}
+.subcanvas{position:absolute;overflow:hidden;border-radius:8px;pointer-events:none}.subcanvas-box{position:relative;width:100%;height:100%;overflow:hidden;border:1px solid rgba(29,31,37,.08);border-radius:8px;background:rgba(255,255,255,.42);box-shadow:0 8px 20px rgba(29,31,37,.06)}.subcanvas-grid{position:absolute;inset:0;background-image:radial-gradient(rgba(209,216,235,.85) 1px,transparent 1px);background-size:20px 20px;background-position:1px 1px}.subcanvas-header{position:absolute;left:0;top:0;right:0;height:48px;display:flex;align-items:center;gap:10px;padding:0 12px;border-bottom:1px solid rgba(29,31,37,.06)}.subcanvas-icon{width:23px;height:23px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;background:#eefaf3;color:#159957;font-size:12px;font-weight:700}.subcanvas-title{font-size:13px;font-weight:650;color:rgba(6,7,9,.82);flex:1}.subcanvas-actions{font-size:13px;color:rgba(6,7,9,.52)}
+.wf-node{position:absolute;width:360px;min-height:92px;z-index:10;overflow:visible}.node-card{overflow:hidden;border:1px solid var(--node-border);border-radius:8px;background:#fff;box-shadow:0 8px 20px rgba(29,31,37,.08),0 1px 4px rgba(29,31,37,.06)}.node-header{height:44px;display:flex;align-items:center;gap:8px;padding:8px 10px 7px;border-radius:8px 8px 0 0}.node-icon{width:23px;height:23px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;background:rgba(95,103,255,.11);color:#5660f5;font-size:12px;font-weight:700}.kind-start .node-icon{background:rgba(113,88,255,.12);color:#7158ff}.kind-end .node-icon{background:rgba(28,184,112,.12);color:#0a9d61}.kind-workflow .node-icon,.kind-tool .node-icon,.kind-processor .node-icon{background:#eefaf3;color:#159957}.node-title-box{min-width:0;flex:1}.node-title{font-size:13px;font-weight:650;line-height:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.node-desc{font-size:11px;line-height:15px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.node-actions{display:flex;gap:10px;color:rgba(6,7,9,.58);font-size:13px}.node-body{padding:3px 8px 8px}.node-row{display:grid;grid-template-columns:38px minmax(0,1fr);gap:7px;min-height:24px;padding:2px 0;align-items:start}.row-label{font-size:11px;line-height:22px;color:var(--muted)}.row-items{display:flex;flex-wrap:wrap;gap:5px;align-items:center;min-width:0;overflow:hidden}.chip{display:inline-flex;align-items:center;gap:3px;height:20px;max-width:145px;min-width:0;padding:0 5px;border:1px solid var(--chip-border);border-radius:5px;background:var(--chip-bg);font-size:11px;line-height:18px;color:rgba(6,7,9,.70);white-space:nowrap;overflow:hidden;flex:0 1 auto}.chip-type{font-size:10px;color:#758096;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;flex:0 0 auto}.chip-name{overflow:hidden;text-overflow:ellipsis;min-width:0}.model-row .chip,.skill-row .chip{max-width:230px;background:#f6f7fb}.port{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--line);box-shadow:0 0 0 2px rgba(95,103,255,.14);z-index:12}.comment{position:absolute;border-radius:8px;padding:10px 12px;background:#fffbed;border:1px solid #f2b600;color:rgba(6,7,9,.80);box-shadow:0 4px 14px rgba(242,182,0,.10);overflow:hidden;font-size:12px;line-height:1.5}.comment h3{font-size:14px;margin:6px 0;font-weight:650}.comment ul{margin:0 0 6px 0;padding-left:16px}.comment li{margin:0}.comment p{margin:0 0 6px}
+</style></head><body>
+<div id="viewport"><main id="stage"><svg class="edge" data-id="e1" style="left:3208.000px;top:386.850px;width:124.000px;height:24.000px" width="124.000" height="24.000" viewBox="0 0 124.000 24.000"><path class="edge-main" d="M22 12 C 62 12,62 12, 102 12"></path><path class="edge-arrow" d="M 96,6 L 102,12 L 96,18"></path></svg>
+<svg class="edge" data-id="e2" style="left:3668.000px;top:386.850px;width:124.000px;height:24.000px" width="124.000" height="24.000" viewBox="0 0 124.000 24.000"><path class="edge-main" d="M22 12 C 62 12,62 12, 102 12"></path><path class="edge-arrow" d="M 96,6 L 102,12 L 96,18"></path></svg>
+<svg class="edge" data-id="e3" style="left:2748.030px;top:386.830px;width:123.974px;height:24.020px" width="123.974" height="24.020" viewBox="0 0 123.974 24.020"><path class="edge-main" d="M22 12 C 61.98679370564878 12,61.98679370564878 12.020168735475863, 101.97358741129756 12.020168735475863"></path><path class="edge-arrow" d="M 95.97358741129756,6.020168735475863 L 101.97358741129756,12.020168735475863 L 95.97358741129756,18.020168735475863"></path></svg>
+<svg class="edge" data-id="e4" style="left:4128.000px;top:386.850px;width:59.000px;height:26.790px" width="59.000" height="26.790" viewBox="0 0 59.000 26.790"><path class="edge-main" d="M22 12 C 29.5 12,29.5 14.789928601614292, 37 14.789928601614292"></path><path class="edge-arrow" d="M 31,8.789928601614292 L 37,14.789928601614292 L 31,20.789928601614292"></path></svg>
+<svg class="edge" data-id="e5" style="left:4523.000px;top:386.830px;width:124.027px;height:26.810px" width="124.027" height="26.810" viewBox="0 0 124.027 26.810"><path class="edge-main" d="M22 14.810097337090156 C 62.013277487005325 14.810097337090156,62.013277487005325 12, 102.02655497401156 12"></path><path class="edge-arrow" d="M 96.02655497401156,6 L 102.02655497401156,12 L 96.02655497401156,18"></path></svg>
+<svg class="edge" data-id="e6" style="left:348.000px;top:531.500px;width:484.000px;height:24.050px" width="484.000" height="24.050" viewBox="0 0 484.000 24.050"><path class="edge-main" d="M22 12 C 242 12,242 12.049999999999955, 462 12.049999999999955"></path><path class="edge-arrow" d="M 456,6.0499999999999545 L 462,12.049999999999955 L 456,18.049999999999955"></path></svg>
+<svg class="edge" data-id="e7" style="left:1628.000px;top:861.650px;width:124.000px;height:24.000px" width="124.000" height="24.000" viewBox="0 0 124.000 24.000"><path class="edge-main" d="M22 12 C 62 12,62 12, 102 12"></path><path class="edge-arrow" d="M 96,6 L 102,12 L 96,18"></path></svg>
+<svg class="edge" data-id="e8" style="left:2088.000px;top:861.650px;width:124.000px;height:24.100px" width="124.000" height="24.100" viewBox="0 0 124.000 24.100"><path class="edge-main" d="M22 12 C 62 12,62 12.100000000000023, 102 12.100000000000023"></path><path class="edge-arrow" d="M 96,6.100000000000023 L 102,12.100000000000023 L 96,18.100000000000023"></path></svg>
+<svg class="edge" data-id="e9" style="left:1168.310px;top:69.650px;width:2523.695px;height:486.889px" width="2523.695" height="486.889" viewBox="0 0 2523.695 486.889"><path class="edge-main" d="M22 474.88920703297777 C 1261.8474811856609 474.88920703297777,1261.8474811856609 12, 2501.6949623713213 12"></path><path class="edge-arrow" d="M 2495.6949623713213,6 L 2501.6949623713213,12 L 2495.6949623713213,18"></path></svg>
+<svg class="edge" data-id="e10" style="left:1168.310px;top:571.236px;width:123.695px;height:314.414px" width="123.695" height="314.414" viewBox="0 0 123.695 314.414"><path class="edge-main" d="M22 12 C 61.84748118566063 12,61.84748118566063 302.41367680717383, 101.69496237132125 302.41367680717383"></path><path class="edge-arrow" d="M 95.69496237132125,296.41367680717383 L 101.69496237132125,302.41367680717383 L 95.69496237132125,308.41367680717383"></path></svg>
+<svg class="edge" data-id="e11" style="left:2548.310px;top:901.430px;width:123.693px;height:115.820px" width="123.693" height="115.820" viewBox="0 0 123.693 115.820"><path class="edge-main" d="M22 12 C 61.84633800249276 12,61.84633800249276 103.82043693358264, 101.69267600498597 103.82043693358264"></path><path class="edge-arrow" d="M 95.69267600498597,97.82043693358264 L 101.69267600498597,103.82043693358264 L 95.69267600498597,109.82043693358264"></path></svg>
+<svg class="edge" data-id="e12" style="left:3008.000px;top:993.250px;width:684.000px;height:24.000px" width="684.000" height="24.000" viewBox="0 0 684.000 24.000"><path class="edge-main" d="M22 12 C 342 12,342 12, 662 12"></path><path class="edge-arrow" d="M 656,6 L 662,12 L 656,18"></path></svg>
+<svg class="edge" data-id="e13" style="left:4028.000px;top:993.250px;width:684.000px;height:24.000px" width="684.000" height="24.000" viewBox="0 0 684.000 24.000"><path class="edge-main" d="M22 12 C 342 12,342 12, 662 12"></path><path class="edge-arrow" d="M 656,6 L 662,12 L 656,18"></path></svg>
+<svg class="edge" data-id="e14" style="left:5968.000px;top:730.050px;width:124.000px;height:24.050px" width="124.000" height="24.050" viewBox="0 0 124.000 24.050"><path class="edge-main" d="M22 12 C 62 12,62 12.050000000000068, 102 12.050000000000068"></path><path class="edge-arrow" d="M 96,6.050000000000068 L 102,12.050000000000068 L 96,18.050000000000068"></path></svg>
+<svg class="edge" data-id="e15" style="left:5048.000px;top:69.650px;width:124.000px;height:24.000px" width="124.000" height="24.000" viewBox="0 0 124.000 24.000"><path class="edge-main" d="M22 12 C 62 12,62 12.000000000000014, 102 12.000000000000014"></path><path class="edge-arrow" d="M 96,6.000000000000014 L 102,12.000000000000014 L 96,18.000000000000014"></path></svg>
+<svg class="edge" data-id="e16" style="left:5508.000px;top:69.650px;width:124.000px;height:684.400px" width="124.000" height="684.400" viewBox="0 0 124.000 684.400"><path class="edge-main" d="M22 12 C 62 12,62 672.4, 102 672.4"></path><path class="edge-arrow" d="M 96,666.4 L 102,672.4 L 96,678.4"></path></svg>
+<svg class="edge" data-id="e17" style="left:4027.300px;top:69.650px;width:684.702px;height:24.001px" width="684.702" height="24.001" viewBox="0 0 684.702 24.001"><path class="edge-main" d="M22 12.0013846208102 C 342.3512071472046 12.0013846208102,342.3512071472046 12, 662.7024142944088 12"></path><path class="edge-arrow" d="M 656.7024142944088,6 L 662.7024142944088,12 L 656.7024142944088,18"></path></svg>
+<svg class="edge" data-id="e18" style="left:5048.000px;top:993.250px;width:124.000px;height:24.000px" width="124.000" height="24.000" viewBox="0 0 124.000 24.000"><path class="edge-main" d="M22 12 C 62 12,62 12, 102 12"></path><path class="edge-arrow" d="M 96,6 L 102,12 L 96,18"></path></svg>
+<svg class="edge" data-id="e19" style="left:2548.310px;top:730.050px;width:123.693px;height:156.682px" width="123.693" height="156.682" viewBox="0 0 123.693 156.682"><path class="edge-main" d="M22 144.68244690656877 C 61.84633800249276 144.68244690656877,61.84633800249276 12, 101.69267600498597 12"></path><path class="edge-arrow" d="M 95.69267600498597,6 L 101.69267600498597,12 L 95.69267600498597,18"></path></svg>
+<svg class="edge" data-id="e20" style="left:3008.000px;top:730.050px;width:684.000px;height:24.000px" width="684.000" height="24.000" viewBox="0 0 684.000 24.000"><path class="edge-main" d="M22 12 C 342 12,342 12, 662 12"></path><path class="edge-arrow" d="M 656,6 L 662,12 L 656,18"></path></svg>
+<svg class="edge" data-id="e21" style="left:4028.000px;top:730.050px;width:684.000px;height:24.000px" width="684.000" height="24.000" viewBox="0 0 684.000 24.000"><path class="edge-main" d="M22 12 C 342 12,342 12, 662 12"></path><path class="edge-arrow" d="M 656,6 L 662,12 L 656,18"></path></svg>
+<svg class="edge" data-id="e22" style="left:5048.000px;top:730.050px;width:124.000px;height:24.000px" width="124.000" height="24.000" viewBox="0 0 124.000 24.000"><path class="edge-main" d="M22 12 C 62 12,62 12, 102 12"></path><path class="edge-arrow" d="M 96,6 L 102,12 L 96,18"></path></svg>
+<svg class="edge" data-id="e23" style="left:5508.000px;top:730.050px;width:124.000px;height:24.000px" width="124.000" height="24.000" viewBox="0 0 124.000 24.000"><path class="edge-main" d="M22 12 C 62 12,62 12, 102 12"></path><path class="edge-arrow" d="M 96,6 L 102,12 L 96,18"></path></svg>
+<svg class="edge" data-id="e24" style="left:5508.000px;top:730.050px;width:124.000px;height:287.200px" width="124.000" height="287.200" viewBox="0 0 124.000 287.200"><path class="edge-main" d="M22 275.20000000000005 C 62 275.20000000000005,62 12, 102 12"></path><path class="edge-arrow" d="M 96,6 L 102,12 L 96,18"></path></svg>
+<svg class="edge" data-id="e25" style="left:3685.530px;top:124.609px;width:186.489px;height:104.576px" width="186.489" height="104.576" viewBox="0 0 186.489 104.576"><path class="edge-main" d="M174.4887315554647 22 C 174.4887315554647 52.287760289172496,12 52.287760289172496, 12 82.57552057834499"></path></svg>
+<section class="wf-node kind-start" data-id="100001" style="left:0.000px;top:500.800px;z-index:9">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#f2f2ff 0%, #fff 100%)">
+      <span class="node-icon">▶</span>
+      <div class="node-title-box"><div class="node-title">开始</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str place"><span class="chip-type">str</span><span class="chip-name">place</span></span><span class="chip" title="str type"><span class="chip-type">str</span><span class="chip-name">type</span></span></div></div></div>
+  </div><span class="port port-out" style="left:356.000px;top:39.000px"></span>
+</section>
+<section class="wf-node kind-processor" data-id="192979" style="left:1740.000px;top:818.000px;z-index:10">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#eef4fe 0%, #fff 100%)">
+      <span class="node-icon">◇</span>
+      <div class="node-title-box"><div class="node-title">文本处理</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="{} String1"><span class="chip-type">{}</span><span class="chip-name">String1</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str output"><span class="chip-type">str</span><span class="chip-name">output</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:52.000px"></span><span class="port port-out" style="left:356.000px;top:52.000px"></span>
+</section>
+<section class="wf-node kind-processor" data-id="112351" style="left:820.000px;top:475.150px;z-index:11">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#ebf9f9 0%, #fff 100%)">
+      <span class="node-icon">◇</span>
+      <div class="node-title-box"><div class="node-title">选择器</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">如果</div><div class="row-items"><span class="chip" title="开始 - type 学校"><span class="chip-name">开始 - type 学校</span></span></div></div>
+<div class="node-row"><div class="row-label">否则</div><div class="row-items"><span class="chip" title="—"><span class="chip-name">—</span></span></div></div></div>
+  </div><span class="port port-out" style="left:-4.000px;top:-4.000px"></span><span class="port port-out" style="left:-4.000px;top:-4.000px"></span><span class="port port-in" style="left:-4.000px;top:64.000px"></span>
+</section>
+<section class="wf-node kind-llm" data-id="1828405" style="left:2660.000px;top:923.600px;z-index:12">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#f2f2ff 0%, #fff 100%)">
+      <span class="node-icon">✦</span>
+      <div class="node-title-box"><div class="node-title">整合地点结果</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str input"><span class="chip-type">str</span><span class="chip-name">input</span></span><span class="chip" title="str type"><span class="chip-type">str</span><span class="chip-name">type</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="{} output"><span class="chip-type">{}</span><span class="chip-name">output</span></span></div></div>
+<div class="node-row model-row"><div class="row-label">模型</div><div class="row-items"><span class="chip" title="豆包·1.5·Pro·32k"><span class="chip-name">豆包·1.5·Pro·32k</span></span></div></div>
+<div class="node-row skill-row"><div class="row-label">技能</div><div class="row-items"><span class="chip" title="未配置技能"><span class="chip-name">未配置技能</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:78.000px"></span><span class="port port-out" style="left:356.000px;top:78.000px"></span>
+</section>
+<section class="wf-node kind-llm" data-id="1720577" style="left:3680.000px;top:923.600px;z-index:13">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#f2f2ff 0%, #fff 100%)">
+      <span class="node-icon">✦</span>
+      <div class="node-title-box"><div class="node-title">整合后数量</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="brace place_info"><span class="chip-type">brace</span><span class="chip-name">place_info</span></span><span class="chip" title="str type"><span class="chip-type">str</span><span class="chip-name">type</span></span><span class="chip" title="str place"><span class="chip-type">str</span><span class="chip-name">place</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="{} outputList"><span class="chip-type">{}</span><span class="chip-name">outputList</span></span></div></div>
+<div class="node-row model-row"><div class="row-label">模型</div><div class="row-items"><span class="chip" title="豆包·1.5·Pro·32k"><span class="chip-name">豆包·1.5·Pro·32k</span></span></div></div>
+<div class="node-row skill-row"><div class="row-label">技能</div><div class="row-items"><span class="chip" title="WebPilot"><span class="chip-name">WebPilot</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:78.000px"></span><span class="port port-out" style="left:356.000px;top:78.000px"></span>
+</section>
+<section class="wf-node kind-end" data-id="900001" style="left:6080.000px;top:686.400px;z-index:14">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#f2f2ff 0%, #fff 100%)">
+      <span class="node-icon">✓</span>
+      <div class="node-title-box"><div class="node-title">结束</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str output"><span class="chip-type">str</span><span class="chip-name">output</span></span></div></div>
+<div class="node-row"><div class="row-label">输出类型</div><div class="row-items"><span class="chip" title="返回变量"><span class="chip-name">返回变量</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:52.000px"></span>
+</section>
+<section class="wf-node kind-llm" data-id="103012" style="left:5160.000px;top:0.000px;z-index:15">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#f2f2ff 0%, #fff 100%)">
+      <span class="node-icon">✦</span>
+      <div class="node-title-box"><div class="node-title">学校人数整合</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str[] info"><span class="chip-type">str[]</span><span class="chip-name">info</span></span><span class="chip" title="str type"><span class="chip-type">str</span><span class="chip-name">type</span></span><span class="chip" title="str place"><span class="chip-type">str</span><span class="chip-name">place</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str output"><span class="chip-type">str</span><span class="chip-name">output</span></span></div></div>
+<div class="node-row model-row"><div class="row-label">模型</div><div class="row-items"><span class="chip" title="豆包·1.5·Pro·32k"><span class="chip-name">豆包·1.5·Pro·32k</span></span></div></div>
+<div class="node-row skill-row"><div class="row-label">技能</div><div class="row-items"><span class="chip" title="简易计算器"><span class="chip-name">简易计算器</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:78.000px"></span><span class="port port-out" style="left:356.000px;top:78.000px"></span>
+</section>
+<section class="wf-node kind-processor" data-id="132161" style="left:4700.000px;top:26.000px;z-index:16">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#eef4fe 0%, #fff 100%)">
+      <span class="node-icon">◇</span>
+      <div class="node-title-box"><div class="node-title">students数量处理-转字符串</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str[] String1"><span class="chip-type">str[]</span><span class="chip-name">String1</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str output"><span class="chip-type">str</span><span class="chip-name">output</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:52.000px"></span><span class="port port-out" style="left:356.000px;top:52.000px"></span>
+</section>
+<section class="wf-node kind-processor" data-id="1031607" style="left:4700.000px;top:949.600px;z-index:17">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#eef4fe 0%, #fff 100%)">
+      <span class="node-icon">◇</span>
+      <div class="node-title-box"><div class="node-title">人数数量处理-转字符串</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="{} String1"><span class="chip-type">{}</span><span class="chip-name">String1</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str output"><span class="chip-type">str</span><span class="chip-name">output</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:52.000px"></span><span class="port port-out" style="left:356.000px;top:52.000px"></span>
+</section>
+<section class="wf-node kind-workflow" data-id="127916" style="left:1280.000px;top:806.000px;z-index:18">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#fbf2ff 0%, #fff 100%)">
+      <span class="node-icon">⌘</span>
+      <div class="node-title-box"><div class="node-title">search_around</div><div class="node-desc">路线规划类插件，可以帮助用户规划路线、搜索附近相关地点</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str address"><span class="chip-type">str</span><span class="chip-name">address</span></span><span class="chip" title="str keyword"><span class="chip-type">str</span><span class="chip-name">keyword</span></span><span class="chip" title="number_int count"><span class="chip-type">number_int</span><span class="chip-name">count</span></span><span class="chip" title="number_int offset"><span class="chip-type">number_int</span><span class="chip-name">offset</span></span><span class="chip" title="number_int radius"><span class="chip-type">number_int</span><span class="chip-name">radius</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="num code"><span class="chip-type">num</span><span class="chip-name">code</span></span><span class="chip" title="brace data"><span class="chip-type">brace</span><span class="chip-name">data</span></span><span class="chip" title="str log_id"><span class="chip-type">str</span><span class="chip-name">log_id</span></span><span class="chip" title="str msg"><span class="chip-type">str</span><span class="chip-name">msg</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:64.000px"></span><span class="port port-out" style="left:356.000px;top:64.000px"></span>
+</section>
+<section class="wf-node kind-llm" data-id="1551773" style="left:2660.000px;top:660.400px;z-index:19">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#f2f2ff 0%, #fff 100%)">
+      <span class="node-icon">✦</span>
+      <div class="node-title-box"><div class="node-title">整合医院结果</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str input"><span class="chip-type">str</span><span class="chip-name">input</span></span><span class="chip" title="str type"><span class="chip-type">str</span><span class="chip-name">type</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="{} output"><span class="chip-type">{}</span><span class="chip-name">output</span></span></div></div>
+<div class="node-row model-row"><div class="row-label">模型</div><div class="row-items"><span class="chip" title="豆包·1.5·Pro·32k"><span class="chip-name">豆包·1.5·Pro·32k</span></span></div></div>
+<div class="node-row skill-row"><div class="row-label">技能</div><div class="row-items"><span class="chip" title="未配置技能"><span class="chip-name">未配置技能</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:78.000px"></span><span class="port port-out" style="left:356.000px;top:78.000px"></span>
+</section>
+<section class="wf-node kind-llm" data-id="1862423" style="left:3680.000px;top:660.400px;z-index:20">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#f2f2ff 0%, #fff 100%)">
+      <span class="node-icon">✦</span>
+      <div class="node-title-box"><div class="node-title">医院类型及数量</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str place_name"><span class="chip-type">str</span><span class="chip-name">place_name</span></span><span class="chip" title="str type"><span class="chip-type">str</span><span class="chip-name">type</span></span><span class="chip" title="str place"><span class="chip-type">str</span><span class="chip-name">place</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="{} outputList"><span class="chip-type">{}</span><span class="chip-name">outputList</span></span></div></div>
+<div class="node-row model-row"><div class="row-label">模型</div><div class="row-items"><span class="chip" title="豆包·1.5·Pro·32k"><span class="chip-name">豆包·1.5·Pro·32k</span></span></div></div>
+<div class="node-row skill-row"><div class="row-label">技能</div><div class="row-items"><span class="chip" title="WebPilot"><span class="chip-name">WebPilot</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:78.000px"></span><span class="port port-out" style="left:356.000px;top:78.000px"></span>
+</section>
+<section class="wf-node kind-processor" data-id="1089975" style="left:4700.000px;top:686.400px;z-index:21">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#eef4fe 0%, #fff 100%)">
+      <span class="node-icon">◇</span>
+      <div class="node-title-box"><div class="node-title">数量处理-转字符串_1</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="{} String1"><span class="chip-type">{}</span><span class="chip-name">String1</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str output"><span class="chip-type">str</span><span class="chip-name">output</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:52.000px"></span><span class="port port-out" style="left:356.000px;top:52.000px"></span>
+</section>
+<section class="wf-node kind-processor" data-id="116500" style="left:5620.000px;top:685.400px;z-index:22">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#ebf9f9 0%, #fff 100%)">
+      <span class="node-icon">◇</span>
+      <div class="node-title-box"><div class="node-title">变量聚合</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"></div>
+  </div><span class="port port-in" style="left:-4.000px;top:53.000px"></span><span class="port port-out" style="left:356.000px;top:53.000px"></span>
+</section>
+<section class="wf-node kind-llm" data-id="1623650" style="left:5160.000px;top:660.400px;z-index:23">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#f2f2ff 0%, #fff 100%)">
+      <span class="node-icon">✦</span>
+      <div class="node-title-box"><div class="node-title">医院人数整合</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str info"><span class="chip-type">str</span><span class="chip-name">info</span></span><span class="chip" title="str type"><span class="chip-type">str</span><span class="chip-name">type</span></span><span class="chip" title="str place"><span class="chip-type">str</span><span class="chip-name">place</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str output"><span class="chip-type">str</span><span class="chip-name">output</span></span></div></div>
+<div class="node-row model-row"><div class="row-label">模型</div><div class="row-items"><span class="chip" title="豆包·1.5·Pro·32k"><span class="chip-name">豆包·1.5·Pro·32k</span></span></div></div>
+<div class="node-row skill-row"><div class="row-label">技能</div><div class="row-items"><span class="chip" title="简易计算器"><span class="chip-name">简易计算器</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:78.000px"></span><span class="port port-out" style="left:356.000px;top:78.000px"></span>
+</section>
+<section class="wf-node kind-processor" data-id="172610" style="left:2200.000px;top:805.350px;z-index:24">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#ebf9f9 0%, #fff 100%)">
+      <span class="node-icon">◇</span>
+      <div class="node-title-box"><div class="node-title">选择器_1</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">如果</div><div class="row-items"><span class="chip" title="开始 - type 医院"><span class="chip-name">开始 - type 医院</span></span></div></div>
+<div class="node-row"><div class="row-label">否则</div><div class="row-items"><span class="chip" title="—"><span class="chip-name">—</span></span></div></div></div>
+  </div><span class="port port-out" style="left:-4.000px;top:-4.000px"></span><span class="port port-out" style="left:-4.000px;top:-4.000px"></span><span class="port port-in" style="left:-4.000px;top:64.000px"></span>
+</section>
+<section class="wf-node kind-llm" data-id="1010692" style="left:5160.000px;top:923.600px;z-index:25">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#f2f2ff 0%, #fff 100%)">
+      <span class="node-icon">✦</span>
+      <div class="node-title-box"><div class="node-title">其他</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str info"><span class="chip-type">str</span><span class="chip-name">info</span></span><span class="chip" title="str type"><span class="chip-type">str</span><span class="chip-name">type</span></span><span class="chip" title="str place"><span class="chip-type">str</span><span class="chip-name">place</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str output"><span class="chip-type">str</span><span class="chip-name">output</span></span></div></div>
+<div class="node-row model-row"><div class="row-label">模型</div><div class="row-items"><span class="chip" title="豆包·1.5·Pro·32k"><span class="chip-name">豆包·1.5·Pro·32k</span></span></div></div>
+<div class="node-row skill-row"><div class="row-label">技能</div><div class="row-items"><span class="chip" title="简易计算器"><span class="chip-name">简易计算器</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:78.000px"></span><span class="port port-out" style="left:356.000px;top:78.000px"></span>
+</section>
+<section class="wf-node kind-processor" data-id="197703" style="left:3680.000px;top:26.000px;z-index:26">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#ebf9f9 0%, #fff 100%)">
+      <span class="node-icon">◇</span>
+      <div class="node-title-box"><div class="node-title">批处理</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str[] school_list"><span class="chip-type">str[]</span><span class="chip-name">school_list</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str[] output"><span class="chip-type">str[]</span><span class="chip-name">output</span></span></div></div></div>
+  </div><span class="port port-out" style="left:-4.000px;top:-4.000px"></span><span class="port port-out" style="left:-4.000px;top:-4.000px"></span><span class="port port-in" style="left:-4.000px;top:52.000px"></span>
+</section>
+<section class="subcanvas" data-id="BatchFunction_197703" style="left:2760.000px;top:217.200px;width:1875.000px;height:323.300px;z-index:3">
+  <div class="subcanvas-box">
+    <div class="subcanvas-grid"></div>
+    <header class="subcanvas-header" style="background:linear-gradient(#ebf9f9 0%, rgba(255,255,255,.96) 100%)">
+      <span class="subcanvas-icon">◇</span><span class="subcanvas-title">批处理体</span>
+      <span class="subcanvas-actions">▶ &nbsp;⋯</span>
+    </header>
+  </div>
+</section>
+<section class="wf-node kind-llm" data-id="122049" style="left:3320.000px;top:317.200px;z-index:29">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#f2f2ff 0%, #fff 100%)">
+      <span class="node-icon">✦</span>
+      <div class="node-title-box"><div class="node-title">整合学校结果</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="{} input"><span class="chip-type">{}</span><span class="chip-name">input</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str[] output"><span class="chip-type">str[]</span><span class="chip-name">output</span></span></div></div>
+<div class="node-row model-row"><div class="row-label">模型</div><div class="row-items"><span class="chip" title="豆包·1.5·Pro·32k"><span class="chip-name">豆包·1.5·Pro·32k</span></span></div></div>
+<div class="node-row skill-row"><div class="row-label">技能</div><div class="row-items"><span class="chip" title="未配置技能"><span class="chip-name">未配置技能</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:78.000px"></span><span class="port port-out" style="left:356.000px;top:78.000px"></span>
+</section>
+<section class="wf-node kind-workflow" data-id="1488446" style="left:2860.000px;top:331.200px;z-index:30">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#fbf2ff 0%, #fff 100%)">
+      <span class="node-icon">⌘</span>
+      <div class="node-title-box"><div class="node-title">search_around_1</div><div class="node-desc">路线规划类插件，可以帮助用户规划路线、搜索附近相关地点</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str address"><span class="chip-type">str</span><span class="chip-name">address</span></span><span class="chip" title="str keyword"><span class="chip-type">str</span><span class="chip-name">keyword</span></span><span class="chip" title="number_int count"><span class="chip-type">number_int</span><span class="chip-name">count</span></span><span class="chip" title="number_int offset"><span class="chip-type">number_int</span><span class="chip-name">offset</span></span><span class="chip" title="number_int radius"><span class="chip-type">number_int</span><span class="chip-name">radius</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="num code"><span class="chip-type">num</span><span class="chip-name">code</span></span><span class="chip" title="brace data"><span class="chip-type">brace</span><span class="chip-name">data</span></span><span class="chip" title="str log_id"><span class="chip-type">str</span><span class="chip-name">log_id</span></span><span class="chip" title="str msg"><span class="chip-type">str</span><span class="chip-name">msg</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:64.000px"></span><span class="port port-out" style="left:356.000px;top:64.000px"></span>
+</section>
+<section class="wf-node kind-workflow" data-id="155386" style="left:3780.000px;top:343.200px;z-index:31">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#ebf9f0 0%, #fff 100%)">
+      <span class="node-icon">⌘</span>
+      <div class="node-title-box"><div class="node-title">get_students_num</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str[] school_list"><span class="chip-type">str[]</span><span class="chip-name">school_list</span></span><span class="chip" title="str type"><span class="chip-type">str</span><span class="chip-name">type</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str output"><span class="chip-type">str</span><span class="chip-name">output</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:52.000px"></span><span class="port port-out" style="left:356.000px;top:52.000px"></span>
+</section>
+<section class="wf-node kind-processor" data-id="158000" style="left:4175.000px;top:345.990px;z-index:32">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#eef4fe 0%, #fff 100%)">
+      <span class="node-icon">◇</span>
+      <div class="node-title-box"><div class="node-title">文本处理_1</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str[] String1"><span class="chip-type">str[]</span><span class="chip-name">String1</span></span><span class="chip" title="str String2"><span class="chip-type">str</span><span class="chip-name">String2</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str output"><span class="chip-type">str</span><span class="chip-name">output</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:52.000px"></span><span class="port port-out" style="left:356.000px;top:52.000px"></span>
+</section></main></div>
+<div class="help">按住左键拖动画布 · 滚轮缩放 · Ctrl/⌘ + +/- 缩放 · Ctrl/⌘ + 0 适配</div>
+<div class="floatbar"><span>23 节点 · 25 连线</span><span id="scaleLabel">100%</span><button id="zoomOutBtn" type="button">-</button><button id="zoomInBtn" type="button">+</button><button id="resetBtn" type="button">适配</button><button id="fitBtn" type="button">居中</button></div>
+<script>// 轻量工作流画布交互脚本：拖动视角、滚轮缩放、按钮缩放、适配视图。
+(function(){
+  const viewport = document.getElementById('viewport');
+  const stage = document.getElementById('stage');
+  const fitBtn = document.getElementById('fitBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const zoomInBtn = document.getElementById('zoomInBtn');
+  const zoomOutBtn = document.getElementById('zoomOutBtn');
+  const scaleLabel = document.getElementById('scaleLabel');
+  const bounds = {"minX": 0.0, "minY": 0.0, "width": 6520.0, "height": 1169.6};
+  const minScale = 0.08, maxScale = 2.8;
+  let view = {x: 60, y: 60, scale: 0.245399};
+  function clampScale(s) { return Math.max(minScale, Math.min(maxScale, s)); }
+  function apply() { stage.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.scale})`; scaleLabel.textContent = Math.round(view.scale * 100) + '%'; }
+  function fit() { const pad = 54, vw = Math.max(320, viewport.clientWidth), vh = Math.max(240, viewport.clientHeight); const scale = Math.min((vw-pad*2)/bounds.width, (vh-pad*2)/bounds.height, 1); view.scale = clampScale(scale); view.x = pad - bounds.minX * view.scale; view.y = pad - bounds.minY * view.scale; apply(); }
+  function reset() { fit(); }
+  function zoomAt(clientX, clientY, factor) { const old = view.scale, next = clampScale(old * factor); const rect = viewport.getBoundingClientRect(); const cx = clientX - rect.left, cy = clientY - rect.top; const wx = (cx - view.x) / old, wy = (cy - view.y) / old; view.scale = next; view.x = cx - wx * next; view.y = cy - wy * next; apply(); }
+  function zoomCenter(factor) { const rect = viewport.getBoundingClientRect(); zoomAt(rect.left + rect.width/2, rect.top + rect.height/2, factor); }
+  let dragging = false, last = {x:0,y:0};
+  viewport.addEventListener('pointerdown', e => { if(e.button!==0) return; dragging=true; last={x:e.clientX,y:e.clientY}; viewport.classList.add('dragging'); viewport.setPointerCapture(e.pointerId); });
+  viewport.addEventListener('pointermove', e => { if(!dragging) return; view.x += e.clientX-last.x; view.y += e.clientY-last.y; last={x:e.clientX,y:e.clientY}; apply(); });
+  function stopDrag(e) { dragging=false; viewport.classList.remove('dragging'); try{viewport.releasePointerCapture(e.pointerId)}catch(_){} }
+  viewport.addEventListener('pointerup', stopDrag); viewport.addEventListener('pointercancel', stopDrag);
+  viewport.addEventListener('wheel', e => { e.preventDefault(); zoomAt(e.clientX, e.clientY, e.deltaY > 0 ? 0.90 : 1.10); }, {passive:false});
+  fitBtn && fitBtn.addEventListener('click', fit); resetBtn && resetBtn.addEventListener('click', reset);
+  zoomInBtn && zoomInBtn.addEventListener('click', () => zoomCenter(1.18)); zoomOutBtn && zoomOutBtn.addEventListener('click', () => zoomCenter(1/1.18));
+  window.addEventListener('resize', fit);
+  window.addEventListener('keydown', e => { if((e.ctrlKey||e.metaKey)&&e.key==='0'){e.preventDefault();fit();} if((e.ctrlKey||e.metaKey)&&(e.key==='+'||e.key==='=')){e.preventDefault();zoomCenter(1.18);} if((e.ctrlKey||e.metaKey)&&e.key==='-'){e.preventDefault();zoomCenter(1/1.18);} });
+  fit();
+  window.__workflowView = {fit, reset, zoomCenter, getView:()=>({...view}), bounds};
+})();
+</script></body></html>
