@@ -1,0 +1,1011 @@
+﻿<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>工作流精简还原 - main - 工作流 -智能体平台</title><style>
+:root{--bg:#f7f8fc;--dot:#dfe4f3;--text:rgba(6,7,9,.82);--muted:rgba(6,7,9,.48);--line:#5f67ff;--node-border:rgba(29,31,37,.09);--chip-bg:#f4f5fb;--chip-border:rgba(29,31,37,.08);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text)}
+#viewport{position:fixed;inset:0;overflow:hidden;cursor:grab;background-color:var(--bg);background-image:radial-gradient(var(--dot) .8px,transparent .8px);background-size:24px 24px;touch-action:none;user-select:none}#viewport.dragging{cursor:grabbing}
+#stage{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}.floatbar{position:fixed;z-index:50;right:14px;bottom:14px;display:flex;gap:8px;align-items:center;padding:8px 10px;border:1px solid rgba(29,31,37,.08);border-radius:12px;background:rgba(255,255,255,.92);box-shadow:0 8px 20px rgba(29,31,37,.10);backdrop-filter:blur(10px);font-size:12px;color:var(--muted)}.floatbar button{height:28px;border:1px solid rgba(29,31,37,.10);border-radius:8px;background:#fff;color:var(--text);cursor:pointer;padding:0 9px}.floatbar button:hover{background:#f7f8fc}.help{position:fixed;left:14px;bottom:14px;z-index:50;padding:7px 10px;border:1px solid rgba(29,31,37,.08);border-radius:10px;background:rgba(255,255,255,.88);box-shadow:0 8px 20px rgba(29,31,37,.08);font-size:12px;color:var(--muted);backdrop-filter:blur(10px)}
+.edge{position:absolute;overflow:visible;z-index:7;pointer-events:none}.edge path{fill:none;stroke:var(--line);stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round}.edge-main{filter:drop-shadow(0 1px 0 rgba(255,255,255,.95))}
+.subcanvas{position:absolute;overflow:hidden;border-radius:8px;pointer-events:none}.subcanvas-box{position:relative;width:100%;height:100%;overflow:hidden;border:1px solid rgba(29,31,37,.08);border-radius:8px;background:rgba(255,255,255,.42);box-shadow:0 8px 20px rgba(29,31,37,.06)}.subcanvas-grid{position:absolute;inset:0;background-image:radial-gradient(rgba(209,216,235,.85) 1px,transparent 1px);background-size:20px 20px;background-position:1px 1px}.subcanvas-header{position:absolute;left:0;top:0;right:0;height:48px;display:flex;align-items:center;gap:10px;padding:0 12px;border-bottom:1px solid rgba(29,31,37,.06)}.subcanvas-icon{width:23px;height:23px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;background:#eefaf3;color:#159957;font-size:12px;font-weight:700}.subcanvas-title{font-size:13px;font-weight:650;color:rgba(6,7,9,.82);flex:1}.subcanvas-actions{font-size:13px;color:rgba(6,7,9,.52)}
+.wf-node{position:absolute;width:360px;min-height:92px;z-index:10;overflow:visible}.node-card{overflow:hidden;border:1px solid var(--node-border);border-radius:8px;background:#fff;box-shadow:0 8px 20px rgba(29,31,37,.08),0 1px 4px rgba(29,31,37,.06)}.node-header{height:44px;display:flex;align-items:center;gap:8px;padding:8px 10px 7px;border-radius:8px 8px 0 0}.node-icon{width:23px;height:23px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;background:rgba(95,103,255,.11);color:#5660f5;font-size:12px;font-weight:700}.kind-start .node-icon{background:rgba(113,88,255,.12);color:#7158ff}.kind-end .node-icon{background:rgba(28,184,112,.12);color:#0a9d61}.kind-workflow .node-icon,.kind-tool .node-icon,.kind-processor .node-icon{background:#eefaf3;color:#159957}.node-title-box{min-width:0;flex:1}.node-title{font-size:13px;font-weight:650;line-height:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.node-desc{font-size:11px;line-height:15px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.node-actions{display:flex;gap:10px;color:rgba(6,7,9,.58);font-size:13px}.node-body{padding:3px 8px 8px}.node-row{display:grid;grid-template-columns:38px minmax(0,1fr);gap:7px;min-height:24px;padding:2px 0;align-items:start}.row-label{font-size:11px;line-height:22px;color:var(--muted)}.row-items{display:flex;flex-wrap:wrap;gap:5px;align-items:center;min-width:0;overflow:hidden}.chip{display:inline-flex;align-items:center;gap:3px;height:20px;max-width:145px;min-width:0;padding:0 5px;border:1px solid var(--chip-border);border-radius:5px;background:var(--chip-bg);font-size:11px;line-height:18px;color:rgba(6,7,9,.70);white-space:nowrap;overflow:hidden;flex:0 1 auto}.chip-type{font-size:10px;color:#758096;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;flex:0 0 auto}.chip-name{overflow:hidden;text-overflow:ellipsis;min-width:0}.model-row .chip,.skill-row .chip{max-width:230px;background:#f6f7fb}.port{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--line);box-shadow:0 0 0 2px rgba(95,103,255,.14);z-index:12}.comment{position:absolute;border-radius:8px;padding:10px 12px;background:#fffbed;border:1px solid #f2b600;color:rgba(6,7,9,.80);box-shadow:0 4px 14px rgba(242,182,0,.10);overflow:hidden;font-size:12px;line-height:1.5}.comment h3{font-size:14px;margin:6px 0;font-weight:650}.comment ul{margin:0 0 6px 0;padding-left:16px}.comment li{margin:0}.comment p{margin:0 0 6px}
+
+.run-badge{height:20px;max-width:96px;padding:0 6px;border:1px solid rgba(20,160,98,.18);border-radius:6px;background:#effaf4;color:#10965b;font-size:10px;line-height:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}.run-badge:hover{background:#e7f7ee}.wf-node[data-has-result="1"] .node-card{box-shadow:0 8px 20px rgba(29,31,37,.08),0 0 0 1px rgba(20,160,98,.10)}
+.result-panel{position:fixed;z-index:60;right:14px;top:14px;bottom:60px;width:min(560px,calc(100vw - 28px));display:flex;flex-direction:column;border:1px solid rgba(29,31,37,.10);border-radius:14px;background:rgba(255,255,255,.96);box-shadow:0 16px 48px rgba(29,31,37,.18);backdrop-filter:blur(12px);transform:translateX(calc(100% + 24px));transition:transform .18s ease;overflow:hidden}.result-panel.open{transform:translateX(0)}.result-panel-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid rgba(29,31,37,.08);background:linear-gradient(#fff,#fafbff)}.result-panel-header strong{display:block;font-size:15px}.result-panel-header span{display:block;margin-top:2px;font-size:12px;color:var(--muted)}.result-panel-header button{width:28px;height:28px;border:1px solid rgba(29,31,37,.10);border-radius:8px;background:#fff;font-size:18px;line-height:24px;color:rgba(6,7,9,.55);cursor:pointer}.result-panel-body{overflow:auto;padding:10px 12px 14px}.result-card{margin:0 0 10px;border:1px solid rgba(29,31,37,.08);border-radius:12px;background:#fff;overflow:hidden}.result-card[open]{box-shadow:0 6px 18px rgba(29,31,37,.07)}.result-card summary{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:10px 12px;cursor:pointer;list-style:none}.result-card summary::-webkit-details-marker{display:none}.result-node-title{font-size:13px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.result-status{font-size:11px;color:#0b935b;background:#ebf8f1;border:1px solid rgba(20,160,98,.14);border-radius:999px;padding:2px 6px}.result-size{font-size:11px;color:var(--muted)}.result-card-body{border-top:1px solid rgba(29,31,37,.08);padding:10px 12px}.result-section{margin:0 0 12px}.result-section h4{margin:0 0 7px;font-size:12px;color:rgba(6,7,9,.58);font-weight:650}.result-kv{margin:0 0 10px;border:1px solid rgba(29,31,37,.07);border-radius:10px;background:#fafbff;overflow:hidden}.result-key{padding:6px 9px;border-bottom:1px solid rgba(29,31,37,.06);font-size:12px;font-weight:650;color:#4f5af6;background:#f5f6ff}.result-value{max-height:360px;margin:0;padding:9px;overflow:auto;white-space:pre-wrap;word-break:break-word;font-size:12px;line-height:1.55;color:rgba(6,7,9,.78);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"PingFang SC","Microsoft YaHei",monospace}.result-raw{border:1px solid rgba(29,31,37,.07);border-radius:10px;background:#fafbff}.result-card.flash{outline:2px solid rgba(95,103,255,.6);outline-offset:2px}
+</style></head><body>
+<div id="viewport"><main id="stage"><svg class="edge" data-id="e1" style="left:358.600px;top:81.392px;width:1892.293px;height:524.708px" width="1892.293" height="524.708" viewBox="0 0 1892.293 524.708"><path class="edge-main" d="M22 512.7082400707518 C 946.1466388620748 512.7082400707518,946.1466388620751 12, 1870.29327772415 12"></path><path class="edge-arrow" d="M 1864.29327772415,6 L 1870.29327772415,12 L 1864.29327772415,18"></path></svg>
+<svg class="edge" data-id="e2" style="left:358.600px;top:332.850px;width:1054.600px;height:273.250px" width="1054.600" height="273.250" viewBox="0 0 1054.600 273.250"><path class="edge-main" d="M22 261.25 C 527.2999999999998 261.25,527.3 12, 1032.6 12"></path><path class="edge-arrow" d="M 1026.6,6 L 1032.6,12 L 1026.6,18"></path></svg>
+<svg class="edge" data-id="e3" style="left:358.600px;top:582.050px;width:1054.600px;height:24.050px" width="1054.600" height="24.050" viewBox="0 0 1054.600 24.050"><path class="edge-main" d="M22 12.050000000000068 C 527.2999999999998 12.050000000000068,527.3 12, 1032.6 12"></path><path class="edge-arrow" d="M 1026.6,6 L 1032.6,12 L 1026.6,18"></path></svg>
+<svg class="edge" data-id="e4" style="left:358.600px;top:582.100px;width:134.600px;height:216.850px" width="134.600" height="216.850" viewBox="0 0 134.600 216.850"><path class="edge-main" d="M22 12 C 67.30000000000001 12,67.30000000000001 204.8499999999999, 112.60000000000002 204.8499999999999"></path><path class="edge-arrow" d="M 106.60000000000002,198.8499999999999 L 112.60000000000002,204.8499999999999 L 106.60000000000002,210.8499999999999"></path></svg>
+<svg class="edge" data-id="e5" style="left:358.600px;top:582.100px;width:134.600px;height:480.050px" width="134.600" height="480.050" viewBox="0 0 134.600 480.050"><path class="edge-main" d="M22 12 C 67.30000000000001 12,67.30000000000001 468.04999999999984, 112.60000000000002 468.04999999999984"></path><path class="edge-arrow" d="M 106.60000000000002,462.04999999999984 L 112.60000000000002,468.04999999999984 L 106.60000000000002,474.04999999999984"></path></svg>
+<svg class="edge" data-id="e6" style="left:2669.200px;top:315.950px;width:124.000px;height:24.050px" width="124.000" height="24.050" viewBox="0 0 124.000 24.050"><path class="edge-main" d="M22 12 C 62 12,62 12.050000000000011, 102 12.050000000000011"></path><path class="edge-arrow" d="M 96,6.050000000000011 L 102,12.050000000000011 L 96,18.05000000000001"></path></svg>
+<svg class="edge" data-id="e7" style="left:1749.200px;top:332.850px;width:124.000px;height:24.000px" width="124.000" height="24.000" viewBox="0 0 124.000 24.000"><path class="edge-main" d="M22 12 C 62 12,62 12, 102 12"></path><path class="edge-arrow" d="M 96,6 L 102,12 L 96,18"></path></svg>
+<svg class="edge" data-id="e8" style="left:829.200px;top:774.950px;width:124.000px;height:24.000px" width="124.000" height="24.000" viewBox="0 0 124.000 24.000"><path class="edge-main" d="M22 12 C 62 12,62 12, 102 12"></path><path class="edge-arrow" d="M 96,6 L 102,12 L 96,18"></path></svg>
+<svg class="edge" data-id="e9" style="left:829.200px;top:1038.150px;width:124.000px;height:24.000px" width="124.000" height="24.000" viewBox="0 0 124.000 24.000"><path class="edge-main" d="M22 12 C 62 12,62 12, 102 12"></path><path class="edge-arrow" d="M 96,6 L 102,12 L 96,18"></path></svg>
+<svg class="edge" data-id="e10" style="left:1289.200px;top:774.950px;width:124.000px;height:80.300px" width="124.000" height="80.300" viewBox="0 0 124.000 80.300"><path class="edge-main" d="M22 12 C 62 12,62 68.29999999999995, 102 68.29999999999995"></path><path class="edge-arrow" d="M 96,62.299999999999955 L 102,68.29999999999995 L 96,74.29999999999995"></path></svg>
+<svg class="edge" data-id="e11" style="left:1289.200px;top:831.250px;width:124.000px;height:230.900px" width="124.000" height="230.900" viewBox="0 0 124.000 230.900"><path class="edge-main" d="M22 218.89999999999998 C 62 218.89999999999998,62 12, 102 12"></path><path class="edge-arrow" d="M 96,6 L 102,12 L 96,18"></path></svg>
+<svg class="edge" data-id="e12" style="left:1749.200px;top:831.250px;width:124.000px;height:24.000px" width="124.000" height="24.000" viewBox="0 0 124.000 24.000"><path class="edge-main" d="M22 12 C 62 12,62 12, 102 12"></path><path class="edge-arrow" d="M 96,6 L 102,12 L 96,18"></path></svg>
+<svg class="edge" data-id="e13" style="left:2209.200px;top:315.950px;width:124.000px;height:539.300px" width="124.000" height="539.300" viewBox="0 0 124.000 539.300"><path class="edge-main" d="M22 527.3 C 62 527.3,62 12, 102 12"></path><path class="edge-arrow" d="M 96,6 L 102,12 L 96,18"></path></svg>
+<svg class="edge" data-id="e14" style="left:2209.200px;top:315.950px;width:124.000px;height:40.900px" width="124.000" height="40.900" viewBox="0 0 124.000 40.900"><path class="edge-main" d="M22 28.90000000000009 C 62 28.90000000000009,62 12, 102 12"></path><path class="edge-arrow" d="M 96,6 L 102,12 L 96,18"></path></svg>
+<svg class="edge" data-id="e15" style="left:2251.690px;top:81.392px;width:416.718px;height:258.558px" width="416.718" height="258.558" viewBox="0 0 416.718 258.558"><path class="edge-main" d="M357.2054386307409 12 C 624.8987163548909 12,-208.1811168175591 246.5582400707517, 59.51216090659091 246.5582400707517"></path><path class="edge-arrow" d="M 53.51216090659091,240.5582400707517 L 59.51216090659091,246.5582400707517 L 53.51216090659091,252.5582400707517"></path></svg>
+<svg class="edge" data-id="e16" style="left:2209.200px;top:315.950px;width:124.000px;height:290.100px" width="124.000" height="290.100" viewBox="0 0 124.000 290.100"><path class="edge-main" d="M22 278.1 C 62 278.1,62 12, 102 12"></path><path class="edge-arrow" d="M 96,6 L 102,12 L 96,18"></path></svg>
+<svg class="edge" data-id="e17" style="left:1749.200px;top:582.050px;width:124.000px;height:24.000px" width="124.000" height="24.000" viewBox="0 0 124.000 24.000"><path class="edge-main" d="M22 12 C 62 12,62 12, 102 12"></path><path class="edge-arrow" d="M 96,6 L 102,12 L 96,18"></path></svg>
+<section class="wf-node kind-start" data-id="100001" data-has-result="1" style="left:10.600px;top:551.400px;z-index:9">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#f2f2ff 0%, #fff 100%)">
+      <span class="node-icon">▶</span>
+      <div class="node-title-box"><div class="node-title">开始</div></div>
+      <span class="node-actions"><button class="run-badge" type="button" data-result-node="100001">运行成功 0.000s</button><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str place"><span class="chip-type">str</span><span class="chip-name">place</span></span></div></div></div>
+  </div><span class="port port-out" style="left:356.000px;top:39.000px"></span>
+</section>
+<section class="wf-node kind-end" data-id="900001" data-has-result="1" style="left:2781.200px;top:272.300px;z-index:10">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#f2f2ff 0%, #fff 100%)">
+      <span class="node-icon">✓</span>
+      <div class="node-title-box"><div class="node-title">结束</div></div>
+      <span class="node-actions"><button class="run-badge" type="button" data-result-node="900001">运行成功 0.000s</button><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str summary"><span class="chip-type">str</span><span class="chip-name">summary</span></span></div></div>
+<div class="node-row"><div class="row-label">输出类型</div><div class="row-items"><span class="chip" title="返回变量"><span class="chip-name">返回变量</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:52.000px"></span>
+</section>
+<section class="wf-node kind-workflow" data-id="182121" data-has-result="1" style="left:1401.200px;top:289.200px;z-index:11">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#ebf9f0 0%, #fff 100%)">
+      <span class="node-icon">⌘</span>
+      <div class="node-title-box"><div class="node-title">get_place_resource</div></div>
+      <span class="node-actions"><button class="run-badge" type="button" data-result-node="182121">运行成功 45s</button><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str place"><span class="chip-type">str</span><span class="chip-name">place</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str output"><span class="chip-type">str</span><span class="chip-name">output</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:52.000px"></span><span class="port port-out" style="left:356.000px;top:52.000px"></span>
+</section>
+<section class="wf-node kind-workflow" data-id="142152" data-has-result="1" style="left:481.200px;top:731.300px;z-index:12">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#ebf9f0 0%, #fff 100%)">
+      <span class="node-icon">⌘</span>
+      <div class="node-title-box"><div class="node-title">get_traffic_info</div></div>
+      <span class="node-actions"><button class="run-badge" type="button" data-result-node="142152">运行成功 43s</button><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str place"><span class="chip-type">str</span><span class="chip-name">place</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str output"><span class="chip-type">str</span><span class="chip-name">output</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:52.000px"></span><span class="port port-out" style="left:356.000px;top:52.000px"></span>
+</section>
+<section class="wf-node kind-workflow" data-id="122727" data-has-result="1" style="left:481.200px;top:994.500px;z-index:13">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#ebf9f0 0%, #fff 100%)">
+      <span class="node-icon">⌘</span>
+      <div class="node-title-box"><div class="node-title">get_gov_info</div></div>
+      <span class="node-actions"><button class="run-badge" type="button" data-result-node="122727">运行成功 19s</button><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str place"><span class="chip-type">str</span><span class="chip-name">place</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str output"><span class="chip-type">str</span><span class="chip-name">output</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:52.000px"></span><span class="port port-out" style="left:356.000px;top:52.000px"></span>
+</section>
+<section class="wf-node kind-workflow" data-id="158946" data-has-result="1" style="left:1401.200px;top:775.600px;z-index:14">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#ebf9f0 0%, #fff 100%)">
+      <span class="node-icon">⌘</span>
+      <div class="node-title-box"><div class="node-title">conclusion_by_people</div><div class="node-desc">根据人口分布得出推荐策略</div></div>
+      <span class="node-actions"><button class="run-badge" type="button" data-result-node="158946">运行成功 4m53s</button><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str input"><span class="chip-type">str</span><span class="chip-name">input</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str output"><span class="chip-type">str</span><span class="chip-name">output</span></span><span class="chip" title="{} output_list"><span class="chip-type">{}</span><span class="chip-name">output_list</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:64.000px"></span><span class="port port-out" style="left:356.000px;top:64.000px"></span>
+</section>
+<section class="wf-node kind-processor" data-id="197806" data-has-result="1" style="left:2321.200px;top:272.300px;z-index:15">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#eef4fe 0%, #fff 100%)">
+      <span class="node-icon">◇</span>
+      <div class="node-title-box"><div class="node-title">数据总结</div></div>
+      <span class="node-actions"><button class="run-badge" type="button" data-result-node="197806">运行成功 0.003s</button><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str String1"><span class="chip-type">str</span><span class="chip-name">String1</span></span><span class="chip" title="str String2"><span class="chip-type">str</span><span class="chip-name">String2</span></span><span class="chip" title="str String3"><span class="chip-type">str</span><span class="chip-name">String3</span></span><span class="chip" title="str String4"><span class="chip-type">str</span><span class="chip-name">String4</span></span><span class="chip" title="str String5"><span class="chip-type">str</span><span class="chip-name">String5</span></span><span class="chip" title="str String6"><span class="chip-type">str</span><span class="chip-name">String6</span></span><span class="chip" title="str String7"><span class="chip-type">str</span><span class="chip-name">String7</span></span><span class="chip" title="str String8"><span class="chip-type">str</span><span class="chip-name">String8</span></span><span class="chip" title="str String9"><span class="chip-type">str</span><span class="chip-name">String9</span></span><span class="chip" title="str String10"><span class="chip-type">str</span><span class="chip-name">String10</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str output"><span class="chip-type">str</span><span class="chip-name">output</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:52.000px"></span><span class="port port-out" style="left:356.000px;top:52.000px"></span>
+</section>
+<section class="wf-node kind-llm" data-id="135014" data-has-result="1" style="left:2238.890px;top:11.742px;z-index:16">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#f2f2ff 0%, #fff 100%)">
+      <span class="node-icon">✦</span>
+      <div class="node-title-box"><div class="node-title">概要</div></div>
+      <span class="node-actions"><button class="run-badge" type="button" data-result-node="135014">运行成功 26s</button><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str input"><span class="chip-type">str</span><span class="chip-name">input</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str output"><span class="chip-type">str</span><span class="chip-name">output</span></span></div></div>
+<div class="node-row model-row"><div class="row-label">模型</div><div class="row-items"><span class="chip" title="豆包·1.5·Pro·32k"><span class="chip-name">豆包·1.5·Pro·32k</span></span></div></div>
+<div class="node-row skill-row"><div class="row-label">技能</div><div class="row-items"><span class="chip" title="WebPilot"><span class="chip-name">WebPilot</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:78.000px"></span><span class="port port-out" style="left:356.000px;top:78.000px"></span>
+</section>
+<section class="comment" data-id="187039" style="left:0.000px;top:731.600px;width:381.205px;height:280.800px;z-index:17"><h3>优化处理</h3><ul><li>对main_muti优化，避免出现高德请求过多的限制</li></ul><h3>变动</h3><ul><li>将people获取放到其他节点信息获取完后再请求</li></ul></section>
+<section class="wf-node kind-llm" data-id="115321" style="left:941.200px;top:968.500px;z-index:18">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#f2f2ff 0%, #fff 100%)">
+      <span class="node-icon">✦</span>
+      <div class="node-title-box"><div class="node-title">总结大模型-人口经济</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str input"><span class="chip-type">str</span><span class="chip-name">input</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str output"><span class="chip-type">str</span><span class="chip-name">output</span></span></div></div>
+<div class="node-row model-row"><div class="row-label">模型</div><div class="row-items"><span class="chip" title="豆包·1.5·Pro·32k"><span class="chip-name">豆包·1.5·Pro·32k</span></span></div></div>
+<div class="node-row skill-row"><div class="row-label">技能</div><div class="row-items"><span class="chip" title="未配置技能"><span class="chip-name">未配置技能</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:78.000px"></span><span class="port port-out" style="left:356.000px;top:78.000px"></span>
+</section>
+<section class="wf-node kind-llm" data-id="1155100" style="left:941.200px;top:705.300px;z-index:19">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#f2f2ff 0%, #fff 100%)">
+      <span class="node-icon">✦</span>
+      <div class="node-title-box"><div class="node-title">总结大模型_交通</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str input"><span class="chip-type">str</span><span class="chip-name">input</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str output"><span class="chip-type">str</span><span class="chip-name">output</span></span></div></div>
+<div class="node-row model-row"><div class="row-label">模型</div><div class="row-items"><span class="chip" title="豆包·1.5·Pro·32k"><span class="chip-name">豆包·1.5·Pro·32k</span></span></div></div>
+<div class="node-row skill-row"><div class="row-label">技能</div><div class="row-items"><span class="chip" title="未配置技能"><span class="chip-name">未配置技能</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:78.000px"></span><span class="port port-out" style="left:356.000px;top:78.000px"></span>
+</section>
+<section class="wf-node kind-llm" data-id="1029123" data-has-result="1" style="left:1861.200px;top:263.200px;z-index:20">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#f2f2ff 0%, #fff 100%)">
+      <span class="node-icon">✦</span>
+      <div class="node-title-box"><div class="node-title">总结大模型_自然景区</div></div>
+      <span class="node-actions"><button class="run-badge" type="button" data-result-node="1029123">运行成功 7s</button><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str input"><span class="chip-type">str</span><span class="chip-name">input</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str output"><span class="chip-type">str</span><span class="chip-name">output</span></span></div></div>
+<div class="node-row model-row"><div class="row-label">模型</div><div class="row-items"><span class="chip" title="豆包·1.5·Pro·32k"><span class="chip-name">豆包·1.5·Pro·32k</span></span></div></div>
+<div class="node-row skill-row"><div class="row-label">技能</div><div class="row-items"><span class="chip" title="未配置技能"><span class="chip-name">未配置技能</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:78.000px"></span><span class="port port-out" style="left:356.000px;top:78.000px"></span>
+</section>
+<section class="wf-node kind-llm" data-id="1481491" data-has-result="1" style="left:1861.200px;top:761.600px;z-index:21">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#f2f2ff 0%, #fff 100%)">
+      <span class="node-icon">✦</span>
+      <div class="node-title-box"><div class="node-title">总结大模型_业态</div></div>
+      <span class="node-actions"><button class="run-badge" type="button" data-result-node="1481491">运行成功 3s</button><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str input"><span class="chip-type">str</span><span class="chip-name">input</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str output"><span class="chip-type">str</span><span class="chip-name">output</span></span></div></div>
+<div class="node-row model-row"><div class="row-label">模型</div><div class="row-items"><span class="chip" title="豆包·1.5·Pro·32k"><span class="chip-name">豆包·1.5·Pro·32k</span></span></div></div>
+<div class="node-row skill-row"><div class="row-label">技能</div><div class="row-items"><span class="chip" title="未配置技能"><span class="chip-name">未配置技能</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:78.000px"></span><span class="port port-out" style="left:356.000px;top:78.000px"></span>
+</section>
+<section class="wf-node kind-workflow" data-id="146651" style="left:1861.200px;top:526.400px;z-index:22">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#ebf9f0 0%, #fff 100%)">
+      <span class="node-icon">⌘</span>
+      <div class="node-title-box"><div class="node-title">gen_map</div><div class="node-desc">生成地图</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str city"><span class="chip-type">str</span><span class="chip-name">city</span></span><span class="chip" title="str place"><span class="chip-type">str</span><span class="chip-name">place</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str around_map"><span class="chip-type">str</span><span class="chip-name">around_map</span></span><span class="chip" title="str city_traffic_map"><span class="chip-type">str</span><span class="chip-name">city_traffic_map</span></span><span class="chip" title="str city_tour_map"><span class="chip-type">str</span><span class="chip-name">city_tour_map</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:64.000px"></span><span class="port port-out" style="left:356.000px;top:64.000px"></span>
+</section>
+<section class="wf-node kind-tool" data-id="197658" style="left:1401.200px;top:526.400px;z-index:23">
+  <div class="node-card">
+    <header class="node-header" style="background:linear-gradient(#fbf2ff 0%, #fff 100%)">
+      <span class="node-icon">◇</span>
+      <div class="node-title-box"><div class="node-title">获取city</div><div class="node-desc">路线规划类插件，可以帮助用户规划路线、搜索附近相关地点</div></div>
+      <span class="node-actions"><span>▶</span><span>⋯</span></span>
+    </header>
+    <div class="node-body"><div class="node-row"><div class="row-label">输入</div><div class="row-items"><span class="chip" title="str address"><span class="chip-type">str</span><span class="chip-name">address</span></span><span class="chip" title="str city"><span class="chip-type">str</span><span class="chip-name">city</span></span></div></div>
+<div class="node-row"><div class="row-label">输出</div><div class="row-items"><span class="chip" title="str log_id"><span class="chip-type">str</span><span class="chip-name">log_id</span></span><span class="chip" title="str msg"><span class="chip-type">str</span><span class="chip-name">msg</span></span><span class="chip" title="num code"><span class="chip-type">num</span><span class="chip-name">code</span></span><span class="chip" title="{} data"><span class="chip-type">{}</span><span class="chip-name">data</span></span></div></div></div>
+  </div><span class="port port-in" style="left:-4.000px;top:64.000px"></span><span class="port port-out" style="left:356.000px;top:64.000px"></span>
+</section></main></div>
+<aside id="resultPanel" class="result-panel open" aria-label="运行结果面板">
+  <header class="result-panel-header"><div><strong>运行结果</strong><span>10 个节点有保存结果</span></div><button id="closeResultBtn" type="button">×</button></header>
+  <div class="result-panel-body"><details class="result-card" data-result-card="900001" open>
+  <summary><span class="result-node-title">结束</span><span class="result-status">运行成功 0.000s</span><span class="result-size">1861 字</span></summary>
+  <div class="result-card-body"><section class="result-section"><h4>输出变量</h4><div class="result-kv"><div class="result-key">summary</div><pre class="result-value">## 介绍
+**基本介绍**：长沙市后湖艺术园区位于岳麓山脚下、大学城中心。它由老毛纺厂改建而来，有类似北京 798 艺术区的背景。这里被打造成生态治理示范区，集原创艺术创作交易、文化展示、休闲娱乐于一体。园区内有美术馆和培训中心，还定期举办“后湖·艺耕”草坪艺术季等文化活动，是长沙重要的文化艺术地标。 ^^
+
+### 地图链接
+- 长沙市后湖艺术园区周边：http://<域名地址暂时不可用>:8000/static/generated/map_20251211_082307_730e1617.html?type=around
+- 长沙市交通：http://<域名地址暂时不可用>:8000/static/generated/map_20260703_085137_7739af95.html?type=city
+- 长沙市旅游：http://<域名地址暂时不可用>:8000/static/generated/map_20260703_085152_62b9784e.html?type=city
+
+## 人口经济
+### 人口数据总结
+根据第七次全国人口普查结果，2020年岳麓区常住人口为1526641人，0 - 14岁、15 - 64岁、65岁及以上人口比重分别为16.93%、75.06%、8.01%，性别比为98.24（女 = 100），城镇人口1436865人，乡村人口89776人^^国家统计局发布的第七次全国人口普查公报^^。
+
+### GDP数据总结
+2022年岳麓区地区生产总值（GDP）1326.86亿元，同比增长4.3%。2020年第一产业增加值111292万元，第二产业增加值3823059万元。2022年城镇居民人均可支配收入65478元，同比增长4.2%，农村居民人均可支配收入42675元，同比增长6.6%^^岳麓区人民政府官网发布的《2022年岳麓区国民经济和社会发展统计公报》^^。
+
+### 关联结论
+岳麓区劳动年龄人口占比较高，为经济发展提供充足劳动力，推动2022年GDP增长4.3%。同时，居民收入增长利于拉动消费，进一步促进经济发展。 
+
+## 交通
+1. **项目地址**：未明确给出项目地址，推测分析范围基于上述公交站、地铁站及交通枢纽信息所涉及区域（用户提供相关位置信息）  
+2. **数据整理**：  
+   - **公交覆盖**：项目周边500 - 700米内有5个公交站，途经线路包括202路、315路、360路、913路、156路、205路等。距离较远（2000 - 3000米）的公交站有中南大学学生公寓、腌鱼塘、磨子山、沙泥塘等站，线路有360路、913路、大科城2号线、大科城4号线、立珊专线等（用户提供）；  
+   - **地铁信息**：最近的地铁站为中南大学站，步行距离2235米，途经3号线。距离稍近的阜埠河站步行距离2147米，可换乘3号线和4号线；阳光站步行距离2750米，途经3号线（用户提供）；  
+   - **交通枢纽**：距离湘江大码头1246米，鹿港码头2141米（用户提供）。  
+3. **综合结论**：项目地公共交通可达性评分4.5/10，**优势**在于周边一定范围内有较多公交站且线路丰富，可选择的出行线路较多。**待优化**：地铁步行距离较远，500米内公交站覆盖数量有限。建议在项目周边增设500米内的公交站点，同时考虑设置直达地铁的便民摆渡车（基于用户提供的公交站和地铁站分布数据）。 
+
+##  自然景区
+核心分析方向为项目地的自然资源与景区资源情况。
+- **自然资源**：有阜埠河，位于岳麓区，经纬度112.950610,28.164865 ，间隔距离2632米。
+- **景区资源**：包含实竹塘土地庙、五彩栈道等多个景观，有自然景观如中南大学潇湘校区天鹅湖，也有人文景观如实竹塘土地庙，多分布在岳麓区周边。
+
+核心优势：区域内自然与人文景观丰富。开发潜力：生态旅游开发潜力评级：中。保护建议：建议加强对阜埠河的生态保护，合理规划景区开发，避免过度开发。结论：岳麓区有阜埠河等自然资源，及众多景区资源，景观类型丰富（数据来源：用户提供信息），可适度发展生态旅游，同时注重河流生态保护。 
+
+## 业态
+### 基础信息
+- **项目地址**：长沙市后湖艺术园区
+- **分析时效需求**：未提及，按照最新提供的数据进行分析
+- **额外补充分析维度**：未提及，按默认四大资源类型（商业、医疗、教育、居住）分析
+
+### 各资源分析
+#### 商业资源分析
+- **数据整合**：
+    - 公司数量：共统计到14家公司，总人数246人，但部分公司人数未查询到。
+    - 类型：涵盖营销策划、健康管理、文化传媒、建筑装饰、物联科技等多种类型。
+    - 品牌构成：由于缺乏品牌相关信息，暂无法分析连锁/本地品牌占比。
+    - 规划进度：无相关数据。
+    - 典型品牌入驻情况：无明显典型品牌相关信息。
+    - 租金水平、销售额趋势：无相关公开数据。
+- **分类拆解分析**：
+    - 品类覆盖度：从公司类型来看，涉及营销、健康、文化、建筑等领域，但缺乏购物、餐饮等传统商业业态，夜间经济等空白领域明显。
+    - 配套密度：由于缺乏区域面积数据，无法计算单位面积内商业设施数量，难以对比区域平均水平。
+
+#### 医疗资源分析
+- **数据整合**：
+    - 医院数量：共统计到15家医疗机构，总人数182人，但部分机构人数未查询到。
+    - 等级：有1家三级医院（中南大学岳麓山校区校医院），多家一级及以下医院和卫生服务站。
+    - 床位数：无相关数据。
+    - 重点科室分布：无相关数据。
+    - 距离差异：由于未给出各小区到医院的距离，无法分析。
+- **分类拆解分析**：
+    - 可及性：缺乏各小区到医院的步行/车行时间数据，无法分析。
+    - 层级结构：头部医疗资源（三级医院）仅有1家，基础医疗资源（社区卫生服务站等）相对较多，供给结构基本合理，但可能存在部分区域覆盖不足的情况。
+
+#### 教育资源分析
+- **数据整合**：
+    - 学校数量：共统计到21所学校，总人数91283人，其中小学7所，人数4162人；中学6所，人数9340人；大学8所，人数77781人。
+    - 师资力量：无相关数据。
+    - 升学率：无相关数据。
+    - 招生范围：无相关数据。
+    - 特色教育资源：有网上老年大学湖南校友会、一墨塾日语·韩语·留学·自习室、天星高考等特色教育资源。
+- **分类拆解分析**：
+    - 学段适配：涵盖了小学、中学、大学等全年龄段教育，但幼小衔接、课后托管等配套可能存在缺口。
+    - 质量评估：由于缺乏升学率、师资学历等数据，无法进行质量评估。
+
+#### 居住资源分析
+- **数据整合**：
+    - 小区数量：共统计到15个小区，但总人数显示为0，部分小区人数未查询到。
+    - 人口密度：无相关数据。
+    - 户型结构：无相关数据。
+    - 房价/租金波动趋势：无相关数据。
+    - 居住人口职业结构：无相关数据。
+- **分类拆解分析**：
+    - 居住人口画像：由于缺乏常住人口年龄结构、收入水平等数据，无法进行画像分析。
+    - 社区成熟度：由于缺乏新建/老旧小区占比等数据，无法分析居住配套缺口。
+
+### 资源匹配度分析
+- 以居住人口规模为基准（虽然本次数据中居住人口总人数显示为0，但园区内实际应有居住人口），商业资源方面，目前商业业态不够丰富，难以满足居民的消费需求；医疗资源方面，基础医疗资源相对较多，但头部医疗资源较少，可能无法满足居民的大病就医需求；教育资源丰富，涵盖了全年龄段教育，但可能在幼小衔接、课后托管等方面存在不足；居住资源方面，由于数据缺失，无法准确评估居住资源与其他资源的匹配度。
+- 短板识别：商业资源品类覆盖不足，夜间经济、高端商业等业态缺失；医疗资源中头部医疗资源较少；教育资源在幼小衔接、课后托管等方面可能存在缺口；居住资源数据缺失严重，无法准确评估。
+
+### 结论输出
+#### 商业资源
+- **核心数据**：共14家公司，总人数246人（部分公司人数未查询），涉及多种类型公司。
+- **现状评估**：商业业态不够丰富，缺乏购物、餐饮等传统商业业态，夜间经济等存在空白。
+- **潜在优化点**：引入购物、餐饮等商业业态，发展夜间经济，丰富商业品类。
+
+#### 医疗资源
+- **核心数据**：15家医疗机构，总人数182人（部分机构人数未查询），有1家三级医院。
+- **现状评估**：基础医疗资源相对较多，头部医疗资源较少，可能存在部分区域覆盖不足。
+- **潜在优化点**：适当增加大型综合医院等头部医疗资源，优化医疗资源布局。
+
+#### 教育资源
+- **核心数据**：21所学校，总人数91283人，涵盖小学、中学、大学。
+- **现状评估**：教育资源丰富，但幼小衔接、课后托管等配套可能存在缺口。
+- **潜在优化点**：引入专业的幼小衔接机构和课后托管服务。
+
+#### 居住资源
+- **核心数据**：15个小区，总人数显示为0（部分小区人数未查询）。
+- **现状评估**：由于数据缺失，无法准确评估居住资源现状。
+- **潜在优化点**：补充小区人口、户型、房价、租金等数据，以便更好地评估居住资源与其他资源的匹配度。
+
+#### 综合结论
+- **资源密度评分**：商业资源3分，医疗资源4分，教育资源6分，居住资源因数据缺失难以评分。
+- **优势领域**：教育资源丰富，涵盖全年龄段。
+- **待补短板**：商业资源品类不足，医疗资源中头部资源较少，教育资源幼小衔接和课后托管配套不足，居住资源数据缺失。
+- **建议方向**：丰富商业业态，增加头部医疗资源，完善教育配套，补充居住资源数据。 </pre></div></section></div>
+</details><details class="result-card" data-result-card="142152">
+  <summary><span class="result-node-title">get_traffic_info</span><span class="result-status">运行成功 43s</span><span class="result-size">1284 字</span></summary>
+  <div class="result-card-body"><section class="result-section"><h4>输入</h4><div class="result-kv"><div class="result-key">place</div><pre class="result-value">长沙市后湖艺术园区</pre></div></section><section class="result-section"><h4>输出</h4><div class="result-kv"><div class="result-key">output</div><pre class="result-value">### 城市内交通情况
+#### 公交站信息
+|公交站名称|经纬度|途经线路|间隔距离（米）|
+| ---- | ---- | ---- | ---- |
+|清水路公交首末站|112.940432,28.154447|315路;大科城4号线|545|
+|实竹塘|112.942802,28.153860|202路;315路;360路;913路|545|
+|后湖路清水路口|112.938326,28.155538|156路|615|
+|后湖小区北|112.939106,28.154401|202路;205路;360路|572|
+|唐家洲|112.945942,28.157493|202路;315路;360路;913路|545|
+|中南大学学生公寓|112.936853,28.155701|360路;913路;大科城2号线;大科城4号线;立珊专线|3028|
+|后湖小区东|112.941439,28.151861|205路;913路;大科城4号线|698|
+|后湖小区南|112.940139,28.151267|239路;311路;913路;大科城2号线;大科城4号线|2235|
+|中南大学新校区|112.943327,28.151080|205路;239路;311路;大科城2号线|2235|
+|湖大德智园学生公寓|112.941058,28.162584|156路;大科城2号线|545|
+|腌鱼塘|112.935177,28.156968|205路;311路;360路;913路;大科城2号线;大科城4号线;立珊专线|3028|
+|中南大学地铁站|112.937415,28.151980|156路;202路;311路;913路;大科城2号线;大科城4号线|1163|
+|湖南美术馆|112.948746,28.151602|205路;239路;311路;大科城2号线|2235|
+|磨子山|112.932917,28.160195|205路;311路;360路;913路;大科城2号线;大科城4号线;立珊专线|2974|
+|沙泥塘|112.932117,28.154639|17路;202路;239路;30路;311路;68路;909路|3193|
+
+#### 地铁站信息
+|地铁站名称|经纬度|途经线路|间隔距离（米）|
+| ---- | ---- | ---- | ---- |
+|中南大学|112.937700,28.154180|3号线|2235|
+|阜埠河|112.947552,28.165190|3号线;4号线|2147|
+|阳光|112.937036,28.141393|3号线|2750|
+
+### 重要交通枢纽（连接城区）
+|交通枢纽名称|经纬度|位置|间隔距离（米）|
+| ---- | ---- | ---- | ---- |
+|湘江大码头|112.951168,28.154636|潇湘中路328号58众创一楼|1246|
+|鹿港码头|112.934397,28.164449|麓山南路880号|2141|</pre></div></section></div>
+</details><details class="result-card" data-result-card="122727">
+  <summary><span class="result-node-title">get_gov_info</span><span class="result-status">运行成功 19s</span><span class="result-size">1519 字</span></summary>
+  <div class="result-card-body"><section class="result-section"><h4>输入</h4><div class="result-kv"><div class="result-key">place</div><pre class="result-value">长沙市后湖艺术园区</pre></div></section><section class="result-section"><h4>输出</h4><div class="result-kv"><div class="result-key">output</div><pre class="result-value">数据类型：常住人口数
+对应的数据：根据第七次全国人口普查结果，岳麓区常住人口为1526641人。
+
+数据类型：GDP
+对应的数据：2022年岳麓区地区生产总值（GDP）1326.86亿元，同比增长4.3%。
+
+数据类型：人均可支配收入
+对应的数据：暂未找到最新岳麓区人均可支配收入数据。
+
+数据类型：城镇居民人均可支配收入
+对应的数据：2022年岳麓区城镇居民人均可支配收入65478元，同比增长4.2%。
+
+数据类型：农村居民人均可支配收入
+对应的数据：2022年岳麓区农村居民人均可支配收入42675元，同比增长6.6%。
+
+数据类型：老龄化相关数据
+对应的数据：暂未找到符合时间要求的岳麓区老龄化相关数据。
+
+数据来源：岳麓区人民政府官网发布的《2022年岳麓区国民经济和社会发展统计公报》、国家统计局发布的第七次全国人口普查公报。 
+数据类型：常住人口数
+对应的数据：根据第七次全国人口普查结果，岳麓区常住人口为1526641人。
+
+数据类型：GDP
+对应的数据：2022年岳麓区地区生产总值（GDP）1326.86亿元，同比增长4.3%。
+
+数据类型：人均可支配收入
+对应的数据：暂未找到最新岳麓区人均可支配收入数据。
+
+数据类型：城镇居民人均可支配收入
+对应的数据：2022年岳麓区城镇居民人均可支配收入65478元，同比增长4.2%。
+
+数据类型：农村居民人均可支配收入
+对应的数据：2022年岳麓区农村居民人均可支配收入42675元，同比增长6.6%。
+
+数据类型：老龄化相关数据
+对应的数据：暂未找到符合时间要求的岳麓区老龄化相关数据。
+
+数据来源：岳麓区人民政府官网发布的《2022年岳麓区国民经济和社会发展统计公报》、国家统计局发布的第七次全国人口普查公报。 
+### 中国县域统计年鉴2001 - 2021
+| 地区名称 | 年份 | 行政区域代码 | 经度 | 纬度 | 所属城市 | 所属省份 | 年末总人口万人 | 第一产业增加值万元 | 第二产业增加值万元 | 城镇居民人均可支配收入元 | 农村居民人均可支配收入元 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 岳麓区 | 2020 | 430104 | 112.93142 | 28.235193 | 长沙市 | 湖南省 | 152.86 | 111292 | 3823059 | 61835 |  |
+- 柱状图：
+### 第七次全国人口普查资料
+| 地区名称 | 年份 | 0 - 14岁人口比重(百分比) | 15 - 64岁人口比重(百分比) | 65岁及以上人口比重(百分比) | 乡村人口(人) | 人口数(人) | 人口数2(人) | 城镇人口(人) | 女性人口(人) | 家庭户数(户) | 少数民族人口比重(百分比) | 性别比(女 = 100) | 户规模(人/户) | 拥有家用汽车户数(户) | 本县(人) | 本省及其他县(人) | 男性人口(人) | 省外(人) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 岳麓区 | 2020 | 16.93 | 75.06 | 8.01 | 89776 | 1526641 | 1182470 | 1436865 | 770114 | 464977 | 3.98 | 98.24 | 2.54 | 25875 | 137546 | 647348 | 756527 | 143085 |</pre></div></section></div>
+</details><details class="result-card" data-result-card="182121">
+  <summary><span class="result-node-title">get_place_resource</span><span class="result-status">运行成功 45s</span><span class="result-size">1831 字</span></summary>
+  <div class="result-card-body"><section class="result-section"><h4>输入</h4><div class="result-kv"><div class="result-key">place</div><pre class="result-value">长沙市后湖艺术园区</pre></div></section><section class="result-section"><h4>输出</h4><div class="result-kv"><div class="result-key">output</div><pre class="result-value">### 自然资源信息
+- 资源名称：阜埠河
+    - 主要特征：经纬度为112.950610,28.164865，间隔距离为2632米
+    - 位置信息：岳麓区
+### 旅游资源信息
+- 资源名称：实竹塘土地庙
+    - 主要特征：经纬度为112.944067,28.155610，间隔距离为388米
+    - 位置信息：清水路1号
+- 资源名称：五彩栈道
+    - 主要特征：经纬度为112.939565,28.158405，间隔距离为545米
+    - 位置信息：清水路43号(中南大学地铁站3号口步行490米)
+- 资源名称：后湖设计创意园区
+    - 主要特征：经纬度为112.942975,28.160951，间隔距离为545米
+    - 位置信息：岳麓街道后湖村杜家塘15号
+- 资源名称：中南大学 - 问渠长廊
+    - 主要特征：经纬度为112.934563,28.156855，间隔距离为3568米
+    - 位置信息：中南大学潇湘校区玉带河畔(升华公寓大门对面)
+- 资源名称：中南大学潇湘校区天鹅湖
+    - 主要特征：经纬度为112.943382,28.148902，间隔距离为2040米
+    - 位置信息：天鹅路中南大学潇湘校区
+- 资源名称：八字墙
+    - 主要特征：经纬度为112.943327,28.168549，间隔距离为2586米
+    - 位置信息：大科城1号线大科城2号线大科城4号线立珊专线
+- 资源名称：李公庙(丰顺路)
+    - 主要特征：经纬度为112.939101,28.145116，间隔距离为2470米
+    - 位置信息：丰顺路与后湖路交叉口东南180米
+- 资源名称：云麓长廊
+    - 主要特征：经纬度为112.952630,28.165670，间隔距离为17108米
+    - 位置信息：潇湘中路283号岳麓山国家大学科技城创业大厦
+- 资源名称：洋海塘社区公园
+    - 主要特征：经纬度为112.924746,28.158727，间隔距离为6624米
+    - 位置信息：左家垅洋海塘小区内
+- 资源名称：中南大学岳麓山校区矿冶园
+    - 主要特征：经纬度为112.930803,28.169026，间隔距离为2852米
+    - 位置信息：麓山南路932号中南大学岳麓山校区
+- 资源名称：麓山景区牡丹园
+    - 主要特征：经纬度为112.938111,28.172373，间隔距离为4976米
+    - 位置信息：登高路58号岳麓山风景名胜区内(南侧)
+- 资源名称：天麓苑社区公园
+    - 主要特征：经纬度为112.952708,28.169676，间隔距离为4097米
+    - 位置信息：桔子洲街道潇湘大道
+- 资源名称：生态湘江平台站
+    - 主要特征：经纬度为112.951428,28.142865，间隔距离为11216米
+    - 位置信息：潇湘中路湘江江滩公园内(南侧)
+### 商业资源信息
+- 资源名称：悦购广场
+    - 主要特征：经纬度为112.935358,28.164050，间隔距离为2200米
+    - 位置信息：麓山南路697号
+- 资源名称：中南·麓南商业广场
+    - 主要特征：经纬度为112.932805,28.162644，间隔距离为2307米
+    - 位置信息：清水路59号
+- 资源名称：潇湘大厦天马学生购物中心
+    - 主要特征：经纬度为112.945925,28.167575，间隔距离为2782米
+    - 位置信息：阜埠河路与天马路交叉口西20米
+- 资源名称：渔湾码头时尚商业广场
+    - 主要特征：经纬度为112.944088,28.168563，间隔距离为2586米
+    - 位置信息：麓山南路299号(阜埠河地铁站6号口步行380米)
+- 资源名称：民生百城(黄鹤店)
+    - 主要特征：经纬度为112.940325,28.144259，间隔距离为2372米，暂停营业
+    - 位置信息：黄鹤小区4片11栋3单元一层门面
+- 资源名称：步步高广场(王家湾店)
+    - 主要特征：经纬度为112.925534,28.160776，间隔距离为3213米，暂停营业
+    - 位置信息：含浦大道与西二环交汇处</pre></div></section></div>
+</details><details class="result-card" data-result-card="158946">
+  <summary><span class="result-node-title">conclusion_by_people</span><span class="result-status">运行成功 4m53s</span><span class="result-size">3648 字</span></summary>
+  <div class="result-card-body"><section class="result-section"><h4>输入</h4><div class="result-kv"><div class="result-key">input</div><pre class="result-value">长沙市后湖艺术园区</pre></div></section><section class="result-section"><h4>输出</h4><div class="result-kv"><div class="result-key">output</div><pre class="result-value">### 长沙市后湖艺术园区学校统计结果
+| 类别 | 人数 | 类型 | 位置 |
+| --- | --- | --- | --- |
+| 总人数 | 91283 | 所有 |  |
+| 小学 | 4162 | 小学 |  |
+| 中学 | 9340 | 中学 |  |
+| 大学 | 77781 | 大学 |  |
+| 作业帮长沙分校 | 未查询到人数 | 小学 | 112.948125,28.159954 |
+| 杜家塘小学 | 582 | 小学 | 112.941645,28.164362 |
+| 岳南路小学 | 700 | 小学 | 112.940691,28.167043 |
+| 博才阳光小学 | 300 | 小学 | 112.940775,28.167075 |
+| 科教小学 | 580 | 小学 | 112.949768,28.166728 |
+| 博才阳光实验小学 | 2000 | 小学 | 112.933425,28.145195 |
+| 中南大学第一附属小学 | 未查询到人数 | 小学 | 112.927489,28.167330 |
+| 雅礼中南附属中学(岳麓山校区) | 1400 | 中学 | 112.928546,28.168193 |
+| 一墨塾日语·韩语·留学·自习室 | 未查询到人数 | 高中 | 112.945407,28.164318 |
+| 湖南师范大学附属艺术中学 | 2940 | 中学 | 112.941390,28.167141 |
+| 天星高考 | 未查询到人数 | 高中 | 112.935325,28.165875 |
+| 湖南师大附中博才实验中学 | 3000 | 中学 | 112.934747,28.166475 |
+| 雅礼中南附属中学 | 2000 | 中学 | 112.928546,28.168193 |
+| 网上老年大学湖南校友会 | 5000 | 大学 | 112.941080,28.156294 |
+| 长沙财税专修学院 | 未查询到人数 | 大学 | 112.946158,28.155673 |
+| 中南大学麓南校区 | 未查询到人数 | 大学 | 112.936595,28.160178 |
+| 中南大学潇湘校区 | 未查询到人数 | 大学 | 112.941027,28.148560 |
+| 中南大学岳麓山校区 | 61781 | 大学 | 112.928873,28.169787 |
+| 湖南师范大学南院校区 | 11000 | 大学 | 112.939249,28.165542 |
+| 现代学徒制(试点)学院 | 未查询到人数 | 大学 | 112.941539,28.166914 |
+### 长沙市后湖艺术园区公司统计结果
+| 类别 | 人数 | 坐标 |
+| --- | --- | --- |
+| 总人数 | 246 |   |
+| 菠萝啤MCN营销策划有限公司 | 未查询到人数 | 112.941981,28.156822 |
+| 麦瑞达健康管理公司 | 50 | 112.941913,28.156669 |
+| 湖南有一家很低调文化传媒有限公司 | 未查询到人数 | 112.942194,28.156709 |
+| 湖南闽泰建筑装饰工程有限公司 | 未查询到人数 | 112.942193,28.156886 |
+| 都市空间设计研究中心 | 未查询到人数 | 112.942314,28.156752 |
+| 秋拾设计有限公司 | 未查询到人数 | 112.942289,28.156909 |
+| 特致珈(长沙)物联科技有限公司 | 未查询到人数 | 112.941506,28.156273 |
+| 于今无量影视传媒 | 未查询到人数 | 112.942363,28.156169 |
+| 湘广土木（湖南湘广土木工程技术有限公司） | 未查询到人数 | 112.942882,28.156724 |
+| 瑞士森德康舒五恒系统公司 | 96 | 112.941673,28.156006 |
+| 上海联创设计集团股份有限公司(长沙分公司) | 100 | 112.941208,28.156267 |
+| 卡斯朗智慧蚊控(中国)运营中心 | 未查询到人数 | 112.942825,28.156329 |
+| 长沙市大展建筑工程有限公司 | 未查询到人数 | 112.942647,28.156043 |
+| 湖南数字闪电文化传播有限公司 | 未查询到人数 | 112.941651,28.155832 |
+| 火星制造 | 未查询到人数 | 112.941788,28.155785 |
+### 长沙市后湖艺术园区医院统计结果
+| 类别 | 人数 | 级别 | 坐标 |
+| --- | --- | --- | --- |
+| 总人数 | 182 |  |   |
+| 后湖新村社区卫生服务站 | 未查询到人数 | 一级 | 112.938458,28.153811 |
+| 岳麓街道麓枫社区卫生服务站 | 未查询到人数 | 一级 | 112.947748,28.157018 |
+| 社区卫生服务站 | 未查询到人数 | 一级 | 112.939135,28.151562 |
+| 长沙中核康复医院 | 50 | 未查询到 | 112.939076,28.151562 |
+| 长沙市岳麓区桔子洲街道天马社区卫生服务站 | 未查询到人数 | 未查询到 | 112.949056,28.161824 |
+| 长沙天马医院 | 未查询到人数 | 一级 | 112.949529,28.161887 |
+| 岳麓街道社区卫生服务站 | 未查询到人数 | 一级 | 112.937206,28.165469 |
+| 岳麓区桔子洲街道渔湾市社区卫生服务站 | 未查询到人数 | 无等级 | 112.948204,28.167479 |
+| 岳麓区黄鹤社区卫生服务站 | 未查询到人数 | 无等级 | 112.944161,28.144001 |
+| 阳光100社区卫生服务站 | 未查询到人数 | 一级 | 112.941264,28.141651 |
+| 岳麓街道社区卫生服务中心(五星院区) | 132 | 一级 | 112.928902,28.146370 |
+| 岳麓街道五星村卫生室 | 未查询到人数 | 一级及以下 | 112.929230,28.145525 |
+| 湖湘懿康堂中医门诊部 | 未查询到人数 | 未查询到 | 112.937289,28.140996 |
+| 岐黄中医医院有限公司 | 未查询到人数 | 未查询到 | 112.941851,28.140411 |
+| 中南大学岳麓山校区校医院 | 未查询到人数 | 三级 | 112.932237,28.171512 |
+### 长沙市后湖艺术园区小区统计结果
+| 类别 | 人数 | 坐标 |
+| --- | --- | --- |
+| 总人数 | ### 长沙市后湖艺术园区小区统计结果
+| 类别 | 人数 | 坐标 |
+| --- | --- | --- |
+| 总人数 | 0 |   |
+| 上雅·树屋 | 未查询到人数 | 112.941550,28.156861 |
+| 后湖小区北区 | 未查询到人数 | 112.939637,28.155830 |
+| 南方庄园 | 未查询到人数 | 112.942975,28.154525 |
+| 后湖有期 | 未查询到人数 | 112.944801,28.156237 |
+| 盖亚花园 | 未查询到人数 | 112.944925,28.157375 |
+| 山海茗庭 | 未查询到人数 | 112.945020,28.157681 |
+| 北京世纪千府 | 未查询到人数 | 112.945178,28.157578 |
+| 清水路21 - 40号底商 | 未查询到人数 | 112.939575,28.153975 |
+| 逅湖国际创意小镇 | 未查询到人数 | 112.945861,28.157964 |
+| 南8舍 | 未查询到人数 | 112.938196,28.158302 |
+| 麓枫和苑1片区 | 未查询到人数 | 112.946928,28.156928 |
+| 洋航寓 | 未查询到人数 | 112.938994,28.152958 |
+| 后湖小区南区 | 未查询到人数 | 112.938681,28.152882 |
+| 后湖小区 | 未查询到人数 | 112.93852,28.152931 |
+| 后湖小区综合楼 | 未查询到人数 | 112.938075,28.151575 |</pre></div><div class="result-kv"><div class="result-key">output_list</div><pre class="result-value"></pre></div></section></div>
+</details><details class="result-card" data-result-card="1029123">
+  <summary><span class="result-node-title">总结大模型_自然景区</span><span class="result-status">运行成功 7s</span><span class="result-size">2115 字</span></summary>
+  <div class="result-card-body"><section class="result-section"><h4>输入</h4><div class="result-kv"><div class="result-key">input</div><pre class="result-value">### 自然资源信息
+- 资源名称：阜埠河
+    - 主要特征：经纬度为112.950610,28.164865，间隔距离为2632米
+    - 位置信息：岳麓区
+### 旅游资源信息
+- 资源名称：实竹塘土地庙
+    - 主要特征：经纬度为112.944067,28.155610，间隔距离为388米
+    - 位置信息：清水路1号
+- 资源名称：五彩栈道
+    - 主要特征：经纬度为112.939565,28.158405，间隔距离为545米
+    - 位置信息：清水路43号(中南大学地铁站3号口步行490米)
+- 资源名称：后湖设计创意园区
+    - 主要特征：经纬度为112.942975,28.160951，间隔距离为545米
+    - 位置信息：岳麓街道后湖村杜家塘15号
+- 资源名称：中南大学 - 问渠长廊
+    - 主要特征：经纬度为112.934563,28.156855，间隔距离为3568米
+    - 位置信息：中南大学潇湘校区玉带河畔(升华公寓大门对面)
+- 资源名称：中南大学潇湘校区天鹅湖
+    - 主要特征：经纬度为112.943382,28.148902，间隔距离为2040米
+    - 位置信息：天鹅路中南大学潇湘校区
+- 资源名称：八字墙
+    - 主要特征：经纬度为112.943327,28.168549，间隔距离为2586米
+    - 位置信息：大科城1号线大科城2号线大科城4号线立珊专线
+- 资源名称：李公庙(丰顺路)
+    - 主要特征：经纬度为112.939101,28.145116，间隔距离为2470米
+    - 位置信息：丰顺路与后湖路交叉口东南180米
+- 资源名称：云麓长廊
+    - 主要特征：经纬度为112.952630,28.165670，间隔距离为17108米
+    - 位置信息：潇湘中路283号岳麓山国家大学科技城创业大厦
+- 资源名称：洋海塘社区公园
+    - 主要特征：经纬度为112.924746,28.158727，间隔距离为6624米
+    - 位置信息：左家垅洋海塘小区内
+- 资源名称：中南大学岳麓山校区矿冶园
+    - 主要特征：经纬度为112.930803,28.169026，间隔距离为2852米
+    - 位置信息：麓山南路932号中南大学岳麓山校区
+- 资源名称：麓山景区牡丹园
+    - 主要特征：经纬度为112.938111,28.172373，间隔距离为4976米
+    - 位置信息：登高路58号岳麓山风景名胜区内(南侧)
+- 资源名称：天麓苑社区公园
+    - 主要特征：经纬度为112.952708,28.169676，间隔距离为4097米
+    - 位置信息：桔子洲街道潇湘大道
+- 资源名称：生态湘江平台站
+    - 主要特征：经纬度为112.951428,28.142865，间隔距离为11216米
+    - 位置信息：潇湘中路湘江江滩公园内(南侧)
+### 商业资源信息
+- 资源名称：悦购广场
+    - 主要特征：经纬度为112.935358,28.164050，间隔距离为2200米
+    - 位置信息：麓山南路697号
+- 资源名称：中南·麓南商业广场
+    - 主要特征：经纬度为112.932805,28.162644，间隔距离为2307米
+    - 位置信息：清水路59号
+- 资源名称：潇湘大厦天马学生购物中心
+    - 主要特征：经纬度为112.945925,28.167575，间隔距离为2782米
+    - 位置信息：阜埠河路与天马路交叉口西20米
+- 资源名称：渔湾码头时尚商业广场
+    - 主要特征：经纬度为112.944088,28.168563，间隔距离为2586米
+    - 位置信息：麓山南路299号(阜埠河地铁站6号口步行380米)
+- 资源名称：民生百城(黄鹤店)
+    - 主要特征：经纬度为112.940325,28.144259，间隔距离为2372米，暂停营业
+    - 位置信息：黄鹤小区4片11栋3单元一层门面
+- 资源名称：步步高广场(王家湾店)
+    - 主要特征：经纬度为112.925534,28.160776，间隔距离为3213米，暂停营业
+    - 位置信息：含浦大道与西二环交汇处</pre></div></section><section class="result-section"><h4>输出</h4><div class="result-kv"><div class="result-key">output</div><pre class="result-value">核心分析方向为项目地的自然资源与景区资源情况。
+- **自然资源**：有阜埠河，位于岳麓区，经纬度112.950610,28.164865 ，间隔距离2632米。
+- **景区资源**：包含实竹塘土地庙、五彩栈道等多个景观，有自然景观如中南大学潇湘校区天鹅湖，也有人文景观如实竹塘土地庙，多分布在岳麓区周边。
+
+核心优势：区域内自然与人文景观丰富。开发潜力：生态旅游开发潜力评级：中。保护建议：建议加强对阜埠河的生态保护，合理规划景区开发，避免过度开发。结论：岳麓区有阜埠河等自然资源，及众多景区资源，景观类型丰富（数据来源：用户提供信息），可适度发展生态旅游，同时注重河流生态保护。 </pre></div></section></div>
+</details><details class="result-card" data-result-card="1481491">
+  <summary><span class="result-node-title">总结大模型_业态</span><span class="result-status">运行成功 3s</span><span class="result-size">3740 字</span></summary>
+  <div class="result-card-body"><section class="result-section"><h4>输入</h4><div class="result-kv"><div class="result-key">input</div><pre class="result-value">### 长沙市后湖艺术园区学校统计结果
+| 类别 | 人数 | 类型 | 位置 |
+| --- | --- | --- | --- |
+| 总人数 | 91283 | 所有 |  |
+| 小学 | 4162 | 小学 |  |
+| 中学 | 9340 | 中学 |  |
+| 大学 | 77781 | 大学 |  |
+| 作业帮长沙分校 | 未查询到人数 | 小学 | 112.948125,28.159954 |
+| 杜家塘小学 | 582 | 小学 | 112.941645,28.164362 |
+| 岳南路小学 | 700 | 小学 | 112.940691,28.167043 |
+| 博才阳光小学 | 300 | 小学 | 112.940775,28.167075 |
+| 科教小学 | 580 | 小学 | 112.949768,28.166728 |
+| 博才阳光实验小学 | 2000 | 小学 | 112.933425,28.145195 |
+| 中南大学第一附属小学 | 未查询到人数 | 小学 | 112.927489,28.167330 |
+| 雅礼中南附属中学(岳麓山校区) | 1400 | 中学 | 112.928546,28.168193 |
+| 一墨塾日语·韩语·留学·自习室 | 未查询到人数 | 高中 | 112.945407,28.164318 |
+| 湖南师范大学附属艺术中学 | 2940 | 中学 | 112.941390,28.167141 |
+| 天星高考 | 未查询到人数 | 高中 | 112.935325,28.165875 |
+| 湖南师大附中博才实验中学 | 3000 | 中学 | 112.934747,28.166475 |
+| 雅礼中南附属中学 | 2000 | 中学 | 112.928546,28.168193 |
+| 网上老年大学湖南校友会 | 5000 | 大学 | 112.941080,28.156294 |
+| 长沙财税专修学院 | 未查询到人数 | 大学 | 112.946158,28.155673 |
+| 中南大学麓南校区 | 未查询到人数 | 大学 | 112.936595,28.160178 |
+| 中南大学潇湘校区 | 未查询到人数 | 大学 | 112.941027,28.148560 |
+| 中南大学岳麓山校区 | 61781 | 大学 | 112.928873,28.169787 |
+| 湖南师范大学南院校区 | 11000 | 大学 | 112.939249,28.165542 |
+| 现代学徒制(试点)学院 | 未查询到人数 | 大学 | 112.941539,28.166914 |
+### 长沙市后湖艺术园区公司统计结果
+| 类别 | 人数 | 坐标 |
+| --- | --- | --- |
+| 总人数 | 246 |   |
+| 菠萝啤MCN营销策划有限公司 | 未查询到人数 | 112.941981,28.156822 |
+| 麦瑞达健康管理公司 | 50 | 112.941913,28.156669 |
+| 湖南有一家很低调文化传媒有限公司 | 未查询到人数 | 112.942194,28.156709 |
+| 湖南闽泰建筑装饰工程有限公司 | 未查询到人数 | 112.942193,28.156886 |
+| 都市空间设计研究中心 | 未查询到人数 | 112.942314,28.156752 |
+| 秋拾设计有限公司 | 未查询到人数 | 112.942289,28.156909 |
+| 特致珈(长沙)物联科技有限公司 | 未查询到人数 | 112.941506,28.156273 |
+| 于今无量影视传媒 | 未查询到人数 | 112.942363,28.156169 |
+| 湘广土木（湖南湘广土木工程技术有限公司） | 未查询到人数 | 112.942882,28.156724 |
+| 瑞士森德康舒五恒系统公司 | 96 | 112.941673,28.156006 |
+| 上海联创设计集团股份有限公司(长沙分公司) | 100 | 112.941208,28.156267 |
+| 卡斯朗智慧蚊控(中国)运营中心 | 未查询到人数 | 112.942825,28.156329 |
+| 长沙市大展建筑工程有限公司 | 未查询到人数 | 112.942647,28.156043 |
+| 湖南数字闪电文化传播有限公司 | 未查询到人数 | 112.941651,28.155832 |
+| 火星制造 | 未查询到人数 | 112.941788,28.155785 |
+### 长沙市后湖艺术园区医院统计结果
+| 类别 | 人数 | 级别 | 坐标 |
+| --- | --- | --- | --- |
+| 总人数 | 182 |  |   |
+| 后湖新村社区卫生服务站 | 未查询到人数 | 一级 | 112.938458,28.153811 |
+| 岳麓街道麓枫社区卫生服务站 | 未查询到人数 | 一级 | 112.947748,28.157018 |
+| 社区卫生服务站 | 未查询到人数 | 一级 | 112.939135,28.151562 |
+| 长沙中核康复医院 | 50 | 未查询到 | 112.939076,28.151562 |
+| 长沙市岳麓区桔子洲街道天马社区卫生服务站 | 未查询到人数 | 未查询到 | 112.949056,28.161824 |
+| 长沙天马医院 | 未查询到人数 | 一级 | 112.949529,28.161887 |
+| 岳麓街道社区卫生服务站 | 未查询到人数 | 一级 | 112.937206,28.165469 |
+| 岳麓区桔子洲街道渔湾市社区卫生服务站 | 未查询到人数 | 无等级 | 112.948204,28.167479 |
+| 岳麓区黄鹤社区卫生服务站 | 未查询到人数 | 无等级 | 112.944161,28.144001 |
+| 阳光100社区卫生服务站 | 未查询到人数 | 一级 | 112.941264,28.141651 |
+| 岳麓街道社区卫生服务中心(五星院区) | 132 | 一级 | 112.928902,28.146370 |
+| 岳麓街道五星村卫生室 | 未查询到人数 | 一级及以下 | 112.929230,28.145525 |
+| 湖湘懿康堂中医门诊部 | 未查询到人数 | 未查询到 | 112.937289,28.140996 |
+| 岐黄中医医院有限公司 | 未查询到人数 | 未查询到 | 112.941851,28.140411 |
+| 中南大学岳麓山校区校医院 | 未查询到人数 | 三级 | 112.932237,28.171512 |
+### 长沙市后湖艺术园区小区统计结果
+| 类别 | 人数 | 坐标 |
+| --- | --- | --- |
+| 总人数 | ### 长沙市后湖艺术园区小区统计结果
+| 类别 | 人数 | 坐标 |
+| --- | --- | --- |
+| 总人数 | 0 |   |
+| 上雅·树屋 | 未查询到人数 | 112.941550,28.156861 |
+| 后湖小区北区 | 未查询到人数 | 112.939637,28.155830 |
+| 南方庄园 | 未查询到人数 | 112.942975,28.154525 |
+| 后湖有期 | 未查询到人数 | 112.944801,28.156237 |
+| 盖亚花园 | 未查询到人数 | 112.944925,28.157375 |
+| 山海茗庭 | 未查询到人数 | 112.945020,28.157681 |
+| 北京世纪千府 | 未查询到人数 | 112.945178,28.157578 |
+| 清水路21 - 40号底商 | 未查询到人数 | 112.939575,28.153975 |
+| 逅湖国际创意小镇 | 未查询到人数 | 112.945861,28.157964 |
+| 南8舍 | 未查询到人数 | 112.938196,28.158302 |
+| 麓枫和苑1片区 | 未查询到人数 | 112.946928,28.156928 |
+| 洋航寓 | 未查询到人数 | 112.938994,28.152958 |
+| 后湖小区南区 | 未查询到人数 | 112.938681,28.152882 |
+| 后湖小区 | 未查询到人数 | 112.93852,28.152931 |
+| 后湖小区综合楼 | 未查询到人数 | 112.938075,28.151575 |</pre></div></section><section class="result-section"><h4>输出</h4><div class="result-kv"><div class="result-key">output</div><pre class="result-value">### 基础信息
+- **项目地址**：长沙市后湖艺术园区
+- **分析时效需求**：未提及，按照最新提供的数据进行分析
+- **额外补充分析维度**：未提及，按默认四大资源类型（商业、医疗、教育、居住）分析
+
+### 各资源分析
+#### 商业资源分析
+- **数据整合**：
+    - 公司数量：共统计到14家公司，总人数246人，但部分公司人数未查询到。
+    - 类型：涵盖营销策划、健康管理、文化传媒、建筑装饰、物联科技等多种类型。
+    - 品牌构成：由于缺乏品牌相关信息，暂无法分析连锁/本地品牌占比。
+    - 规划进度：无相关数据。
+    - 典型品牌入驻情况：无明显典型品牌相关信息。
+    - 租金水平、销售额趋势：无相关公开数据。
+- **分类拆解分析**：
+    - 品类覆盖度：从公司类型来看，涉及营销、健康、文化、建筑等领域，但缺乏购物、餐饮等传统商业业态，夜间经济等空白领域明显。
+    - 配套密度：由于缺乏区域面积数据，无法计算单位面积内商业设施数量，难以对比区域平均水平。
+
+#### 医疗资源分析
+- **数据整合**：
+    - 医院数量：共统计到15家医疗机构，总人数182人，但部分机构人数未查询到。
+    - 等级：有1家三级医院（中南大学岳麓山校区校医院），多家一级及以下医院和卫生服务站。
+    - 床位数：无相关数据。
+    - 重点科室分布：无相关数据。
+    - 距离差异：由于未给出各小区到医院的距离，无法分析。
+- **分类拆解分析**：
+    - 可及性：缺乏各小区到医院的步行/车行时间数据，无法分析。
+    - 层级结构：头部医疗资源（三级医院）仅有1家，基础医疗资源（社区卫生服务站等）相对较多，供给结构基本合理，但可能存在部分区域覆盖不足的情况。
+
+#### 教育资源分析
+- **数据整合**：
+    - 学校数量：共统计到21所学校，总人数91283人，其中小学7所，人数4162人；中学6所，人数9340人；大学8所，人数77781人。
+    - 师资力量：无相关数据。
+    - 升学率：无相关数据。
+    - 招生范围：无相关数据。
+    - 特色教育资源：有网上老年大学湖南校友会、一墨塾日语·韩语·留学·自习室、天星高考等特色教育资源。
+- **分类拆解分析**：
+    - 学段适配：涵盖了小学、中学、大学等全年龄段教育，但幼小衔接、课后托管等配套可能存在缺口。
+    - 质量评估：由于缺乏升学率、师资学历等数据，无法进行质量评估。
+
+#### 居住资源分析
+- **数据整合**：
+    - 小区数量：共统计到15个小区，但总人数显示为0，部分小区人数未查询到。
+    - 人口密度：无相关数据。
+    - 户型结构：无相关数据。
+    - 房价/租金波动趋势：无相关数据。
+    - 居住人口职业结构：无相关数据。
+- **分类拆解分析**：
+    - 居住人口画像：由于缺乏常住人口年龄结构、收入水平等数据，无法进行画像分析。
+    - 社区成熟度：由于缺乏新建/老旧小区占比等数据，无法分析居住配套缺口。
+
+### 资源匹配度分析
+- 以居住人口规模为基准（虽然本次数据中居住人口总人数显示为0，但园区内实际应有居住人口），商业资源方面，目前商业业态不够丰富，难以满足居民的消费需求；医疗资源方面，基础医疗资源相对较多，但头部医疗资源较少，可能无法满足居民的大病就医需求；教育资源丰富，涵盖了全年龄段教育，但可能在幼小衔接、课后托管等方面存在不足；居住资源方面，由于数据缺失，无法准确评估居住资源与其他资源的匹配度。
+- 短板识别：商业资源品类覆盖不足，夜间经济、高端商业等业态缺失；医疗资源中头部医疗资源较少；教育资源在幼小衔接、课后托管等方面可能存在缺口；居住资源数据缺失严重，无法准确评估。
+
+### 结论输出
+#### 商业资源
+- **核心数据**：共14家公司，总人数246人（部分公司人数未查询），涉及多种类型公司。
+- **现状评估**：商业业态不够丰富，缺乏购物、餐饮等传统商业业态，夜间经济等存在空白。
+- **潜在优化点**：引入购物、餐饮等商业业态，发展夜间经济，丰富商业品类。
+
+#### 医疗资源
+- **核心数据**：15家医疗机构，总人数182人（部分机构人数未查询），有1家三级医院。
+- **现状评估**：基础医疗资源相对较多，头部医疗资源较少，可能存在部分区域覆盖不足。
+- **潜在优化点**：适当增加大型综合医院等头部医疗资源，优化医疗资源布局。
+
+#### 教育资源
+- **核心数据**：21所学校，总人数91283人，涵盖小学、中学、大学。
+- **现状评估**：教育资源丰富，但幼小衔接、课后托管等配套可能存在缺口。
+- **潜在优化点**：引入专业的幼小衔接机构和课后托管服务。
+
+#### 居住资源
+- **核心数据**：15个小区，总人数显示为0（部分小区人数未查询）。
+- **现状评估**：由于数据缺失，无法准确评估居住资源现状。
+- **潜在优化点**：补充小区人口、户型、房价、租金等数据，以便更好地评估居住资源与其他资源的匹配度。
+
+#### 综合结论
+- **资源密度评分**：商业资源3分，医疗资源4分，教育资源6分，居住资源因数据缺失难以评分。
+- **优势领域**：教育资源丰富，涵盖全年龄段。
+- **待补短板**：商业资源品类不足，医疗资源中头部资源较少，教育资源幼小衔接和课后托管配套不足，居住资源数据缺失。
+- **建议方向**：丰富商业业态，增加头部医疗资源，完善教育配套，补充居住资源数据。 </pre></div></section></div>
+</details><details class="result-card" data-result-card="135014">
+  <summary><span class="result-node-title">概要</span><span class="result-status">运行成功 26s</span><span class="result-size">178 字</span></summary>
+  <div class="result-card-body"><section class="result-section"><h4>输入</h4><div class="result-kv"><div class="result-key">input</div><pre class="result-value">长沙市后湖艺术园区</pre></div></section><section class="result-section"><h4>技能调用</h4><pre class="result-value result-raw">WebPilot - web_pilot</pre></section><section class="result-section"><h4>输出</h4><div class="result-kv"><div class="result-key">output</div><pre class="result-value">**基本介绍**：长沙市后湖艺术园区位于岳麓山脚下、大学城中心。它由老毛纺厂改建而来，有类似北京 798 艺术区的背景。这里被打造成生态治理示范区，集原创艺术创作交易、文化展示、休闲娱乐于一体。园区内有美术馆和培训中心，还定期举办“后湖·艺耕”草坪艺术季等文化活动，是长沙重要的文化艺术地标。 ^^</pre></div></section></div>
+</details><details class="result-card" data-result-card="197806">
+  <summary><span class="result-node-title">数据总结</span><span class="result-status">运行成功 0.003s</span><span class="result-size">3648 字</span></summary>
+  <div class="result-card-body"><section class="result-section"><h4>输入</h4><div class="result-kv"><div class="result-key">String1</div><pre class="result-value">### 人口数据总结
+根据第七次全国人口普查结果，2020年岳麓区常住人口为1526641人，0 - 14岁、15 - 64岁、65岁及以上人口比重分别为16.93%、75.06%、8.01%，性别比为98.24（女 = 100），城镇人口1436865人，乡村人口89776人^^国家统计局发布的第七次全国人口普查公报^^。
+
+### GDP数据总结
+2022年岳麓区地区生产总值（GDP）1326.86亿元，同比增长4.3%。2020年第一产业增加值111292万元，第二产业增加值3823059万元。2022年城镇居民人均可支配收入65478元，同比增长4.2%，农村居民人均可支配收入42675元，同比增长6.6%^^岳麓区人民政府官网发布的《2022年岳麓区国民经济和社会发展统计公报》^^。
+
+### 关联结论
+岳麓区劳动年龄人口占比较高，为经济发展提供充足劳动力，推动2022年GDP增长4.3%。同时，居民收入增长利于拉动消费，进一步促进经济发展。 </pre></div><div class="result-kv"><div class="result-key">String10</div><pre class="result-value">长沙市</pre></div><div class="result-kv"><div class="result-key">String2</div><pre class="result-value">1. **项目地址**：未明确给出项目地址，推测分析范围基于上述公交站、地铁站及交通枢纽信息所涉及区域（用户提供相关位置信息）  
+2. **数据整理**：  
+   - **公交覆盖**：项目周边500 - 700米内有5个公交站，途经线路包括202路、315路、360路、913路、156路、205路等。距离较远（2000 - 3000米）的公交站有中南大学学生公寓、腌鱼塘、磨子山、沙泥塘等站，线路有360路、913路、大科城2号线、大科城4号线、立珊专线等（用户提供）；  
+   - **地铁信息**：最近的地铁站为中南大学站，步行距离2235米，途经3号线。距离稍近的阜埠河站步行距离2147米，可换乘3号线和4号线；阳光站步行距离2750米，途经3号线（用户提供）；  
+   - **交通枢纽**：距离湘江大码头1246米，鹿港码头2141米（用户提供）。  
+3. **综合结论**：项目地公共交通可达性评分4.5/10，**优势**在于周边一定范围内有较多公交站且线路丰富，可选择的出行线路较多。**待优化**：地铁步行距离较远，500米内公交站覆盖数量有限。建议在项目周边增设500米内的公交站点，同时考虑设置直达地铁的便民摆渡车（基于用户提供的公交站和地铁站分布数据）。 </pre></div><div class="result-kv"><div class="result-key">String3</div><pre class="result-value">核心分析方向为项目地的自然资源与景区资源情况。
+- **自然资源**：有阜埠河，位于岳麓区，经纬度112.950610,28.164865 ，间隔距离2632米。
+- **景区资源**：包含实竹塘土地庙、五彩栈道等多个景观，有自然景观如中南大学潇湘校区天鹅湖，也有人文景观如实竹塘土地庙，多分布在岳麓区周边。
+
+核心优势：区域内自然与人文景观丰富。开发潜力：生态旅游开发潜力评级：中。保护建议：建议加强对阜埠河的生态保护，合理规划景区开发，避免过度开发。结论：岳麓区有阜埠河等自然资源，及众多景区资源，景观类型丰富（数据来源：用户提供信息），可适度发展生态旅游，同时注重河流生态保护。 </pre></div><div class="result-kv"><div class="result-key">String4</div><pre class="result-value">### 基础信息
+- **项目地址**：长沙市后湖艺术园区
+- **分析时效需求**：未提及，按照最新提供的数据进行分析
+- **额外补充分析维度**：未提及，按默认四大资源类型（商业、医疗、教育、居住）分析
+
+### 各资源分析
+#### 商业资源分析
+- **数据整合**：
+    - 公司数量：共统计到14家公司，总人数246人，但部分公司人数未查询到。
+    - 类型：涵盖营销策划、健康管理、文化传媒、建筑装饰、物联科技等多种类型。
+    - 品牌构成：由于缺乏品牌相关信息，暂无法分析连锁/本地品牌占比。
+    - 规划进度：无相关数据。
+    - 典型品牌入驻情况：无明显典型品牌相关信息。
+    - 租金水平、销售额趋势：无相关公开数据。
+- **分类拆解分析**：
+    - 品类覆盖度：从公司类型来看，涉及营销、健康、文化、建筑等领域，但缺乏购物、餐饮等传统商业业态，夜间经济等空白领域明显。
+    - 配套密度：由于缺乏区域面积数据，无法计算单位面积内商业设施数量，难以对比区域平均水平。
+
+#### 医疗资源分析
+- **数据整合**：
+    - 医院数量：共统计到15家医疗机构，总人数182人，但部分机构人数未查询到。
+    - 等级：有1家三级医院（中南大学岳麓山校区校医院），多家一级及以下医院和卫生服务站。
+    - 床位数：无相关数据。
+    - 重点科室分布：无相关数据。
+    - 距离差异：由于未给出各小区到医院的距离，无法分析。
+- **分类拆解分析**：
+    - 可及性：缺乏各小区到医院的步行/车行时间数据，无法分析。
+    - 层级结构：头部医疗资源（三级医院）仅有1家，基础医疗资源（社区卫生服务站等）相对较多，供给结构基本合理，但可能存在部分区域覆盖不足的情况。
+
+#### 教育资源分析
+- **数据整合**：
+    - 学校数量：共统计到21所学校，总人数91283人，其中小学7所，人数4162人；中学6所，人数9340人；大学8所，人数77781人。
+    - 师资力量：无相关数据。
+    - 升学率：无相关数据。
+    - 招生范围：无相关数据。
+    - 特色教育资源：有网上老年大学湖南校友会、一墨塾日语·韩语·留学·自习室、天星高考等特色教育资源。
+- **分类拆解分析**：
+    - 学段适配：涵盖了小学、中学、大学等全年龄段教育，但幼小衔接、课后托管等配套可能存在缺口。
+    - 质量评估：由于缺乏升学率、师资学历等数据，无法进行质量评估。
+
+#### 居住资源分析
+- **数据整合**：
+    - 小区数量：共统计到15个小区，但总人数显示为0，部分小区人数未查询到。
+    - 人口密度：无相关数据。
+    - 户型结构：无相关数据。
+    - 房价/租金波动趋势：无相关数据。
+    - 居住人口职业结构：无相关数据。
+- **分类拆解分析**：
+    - 居住人口画像：由于缺乏常住人口年龄结构、收入水平等数据，无法进行画像分析。
+    - 社区成熟度：由于缺乏新建/老旧小区占比等数据，无法分析居住配套缺口。
+
+### 资源匹配度分析
+- 以居住人口规模为基准（虽然本次数据中居住人口总人数显示为0，但园区内实际应有居住人口），商业资源方面，目前商业业态不够丰富，难以满足居民的消费需求；医疗资源方面，基础医疗资源相对较多，但头部医疗资源较少，可能无法满足居民的大病就医需求；教育资源丰富，涵盖了全年龄段教育，但可能在幼小衔接、课后托管等方面存在不足；居住资源方面，由于数据缺失，无法准确评估居住资源与其他资源的匹配度。
+- 短板识别：商业资源品类覆盖不足，夜间经济、高端商业等业态缺失；医疗资源中头部医疗资源较少；教育资源在幼小衔接、课后托管等方面可能存在缺口；居住资源数据缺失严重，无法准确评估。
+
+### 结论输出
+#### 商业资源
+- **核心数据**：共14家公司，总人数246人（部分公司人数未查询），涉及多种类型公司。
+- **现状评估**：商业业态不够丰富，缺乏购物、餐饮等传统商业业态，夜间经济等存在空白。
+- **潜在优化点**：引入购物、餐饮等商业业态，发展夜间经济，丰富商业品类。
+
+#### 医疗资源
+- **核心数据**：15家医疗机构，总人数182人（部分机构人数未查询），有1家三级医院。
+- **现状评估**：基础医疗资源相对较多，头部医疗资源较少，可能存在部分区域覆盖不足。
+- **潜在优化点**：适当增加大型综合医院等头部医疗资源，优化医疗资源布局。
+
+#### 教育资源
+- **核心数据**：21所学校，总人数91283人，涵盖小学、中学、大学。
+- **现状评估**：教育资源丰富，但幼小衔接、课后托管等配套可能存在缺口。
+- **潜在优化点**：引入专业的幼小衔接机构和课后托管服务。
+
+#### 居住资源
+- **核心数据**：15个小区，总人数显示为0（部分小区人数未查询）。
+- **现状评估**：由于数据缺失，无法准确评估居住资源现状。
+- **潜在优化点**：补充小区人口、户型、房价、租金等数据，以便更好地评估居住资源与其他资源的匹配度。
+
+#### 综合结论
+- **资源密度评分**：商业资源3分，医疗资源4分，教育资源6分，居住资源因数据缺失难以评分。
+- **优势领域**：教育资源丰富，涵盖全年龄段。
+- **待补短板**：商业资源品类不足，医疗资源中头部资源较少，教育资源幼小衔接和课后托管配套不足，居住资源数据缺失。
+- **建议方向**：丰富商业业态，增加头部医疗资源，完善教育配套，补充居住资源数据。 </pre></div><div class="result-kv"><div class="result-key">String5</div><pre class="result-value">**基本介绍**：长沙市后湖艺术园区位于岳麓山脚下、大学城中心。它由老毛纺厂改建而来，有类似北京 798 艺术区的背景。这里被打造成生态治理示范区，集原创艺术创作交易、文化展示、休闲娱乐于一体。园区内有美术馆和培训中心，还定期举办“后湖·艺耕”草坪艺术季等文化活动，是长沙重要的文化艺术地标。 ^^</pre></div><div class="result-kv"><div class="result-key">String6</div><pre class="result-value">http://<域名地址暂时不可用>:8000/static/generated/map_20251211_082307_730e1617.html?type=around</pre></div><div class="result-kv"><div class="result-key">String7</div><pre class="result-value">http://<域名地址暂时不可用>:8000/static/generated/map_20260703_085137_7739af95.html?type=city</pre></div><div class="result-kv"><div class="result-key">String8</div><pre class="result-value">http://<域名地址暂时不可用>:8000/static/generated/map_20260703_085152_62b9784e.html?type=city</pre></div><div class="result-kv"><div class="result-key">String9</div><pre class="result-value">长沙市后湖艺术园区</pre></div></section><section class="result-section"><h4>输出</h4><div class="result-kv"><div class="result-key">output</div><pre class="result-value">## 介绍
+**基本介绍**：长沙市后湖艺术园区位于岳麓山脚下、大学城中心。它由老毛纺厂改建而来，有类似北京 798 艺术区的背景。这里被打造成生态治理示范区，集原创艺术创作交易、文化展示、休闲娱乐于一体。园区内有美术馆和培训中心，还定期举办“后湖·艺耕”草坪艺术季等文化活动，是长沙重要的文化艺术地标。 ^^
+
+### 地图链接
+- 长沙市后湖艺术园区周边：http://<域名地址暂时不可用>:8000/static/generated/map_20251211_082307_730e1617.html?type=around
+- 长沙市交通：http://<域名地址暂时不可用>:8000/static/generated/map_20260703_085137_7739af95.html?type=city
+- 长沙市旅游：http://<域名地址暂时不可用>:8000/static/generated/map_20260703_085152_62b9784e.html?type=city
+
+## 人口经济
+### 人口数据总结
+根据第七次全国人口普查结果，2020年岳麓区常住人口为1526641人，0 - 14岁、15 - 64岁、65岁及以上人口比重分别为16.93%、75.06%、8.01%，性别比为98.24（女 = 100），城镇人口1436865人，乡村人口89776人^^国家统计局发布的第七次全国人口普查公报^^。
+
+### GDP数据总结
+2022年岳麓区地区生产总值（GDP）1326.86亿元，同比增长4.3%。2020年第一产业增加值111292万元，第二产业增加值3823059万元。2022年城镇居民人均可支配收入65478元，同比增长4.2%，农村居民人均可支配收入42675元，同比增长6.6%^^岳麓区人民政府官网发布的《2022年岳麓区国民经济和社会发展统计公报》^^。
+
+### 关联结论
+岳麓区劳动年龄人口占比较高，为经济发展提供充足劳动力，推动2022年GDP增长4.3%。同时，居民收入增长利于拉动消费，进一步促进经济发展。 
+
+## 交通
+1. **项目地址**：未明确给出项目地址，推测分析范围基于上述公交站、地铁站及交通枢纽信息所涉及区域（用户提供相关位置信息）  
+2. **数据整理**：  
+   - **公交覆盖**：项目周边500 - 700米内有5个公交站，途经线路包括202路、315路、360路、913路、156路、205路等。距离较远（2000 - 3000米）的公交站有中南大学学生公寓、腌鱼塘、磨子山、沙泥塘等站，线路有360路、913路、大科城2号线、大科城4号线、立珊专线等（用户提供）；  
+   - **地铁信息**：最近的地铁站为中南大学站，步行距离2235米，途经3号线。距离稍近的阜埠河站步行距离2147米，可换乘3号线和4号线；阳光站步行距离2750米，途经3号线（用户提供）；  
+   - **交通枢纽**：距离湘江大码头1246米，鹿港码头2141米（用户提供）。  
+3. **综合结论**：项目地公共交通可达性评分4.5/10，**优势**在于周边一定范围内有较多公交站且线路丰富，可选择的出行线路较多。**待优化**：地铁步行距离较远，500米内公交站覆盖数量有限。建议在项目周边增设500米内的公交站点，同时考虑设置直达地铁的便民摆渡车（基于用户提供的公交站和地铁站分布数据）。 
+
+##  自然景区
+核心分析方向为项目地的自然资源与景区资源情况。
+- **自然资源**：有阜埠河，位于岳麓区，经纬度112.950610,28.164865 ，间隔距离2632米。
+- **景区资源**：包含实竹塘土地庙、五彩栈道等多个景观，有自然景观如中南大学潇湘校区天鹅湖，也有人文景观如实竹塘土地庙，多分布在岳麓区周边。
+
+核心优势：区域内自然与人文景观丰富。开发潜力：生态旅游开发潜力评级：中。保护建议：建议加强对阜埠河的生态保护，合理规划景区开发，避免过度开发。结论：岳麓区有阜埠河等自然资源，及众多景区资源，景观类型丰富（数据来源：用户提供信息），可适度发展生态旅游，同时注重河流生态保护。 
+
+## 业态
+### 基础信息
+- **项目地址**：长沙市后湖艺术园区
+- **分析时效需求**：未提及，按照最新提供的数据进行分析
+- **额外补充分析维度**：未提及，按默认四大资源类型（商业、医疗、教育、居住）分析
+
+### 各资源分析
+#### 商业资源分析
+- **数据整合**：
+    - 公司数量：共统计到14家公司，总人数246人，但部分公司人数未查询到。
+    - 类型：涵盖营销策划、健康管理、文化传媒、建筑装饰、物联科技等多种类型。
+    - 品牌构成：由于缺乏品牌相关信息，暂无法分析连锁/本地品牌占比。
+    - 规划进度：无相关数据。
+    - 典型品牌入驻情况：无明显典型品牌相关信息。
+    - 租金水平、销售额趋势：无相关公开数据。
+- **分类拆解分析**：
+    - 品类覆盖度：从公司类型来看，涉及营销、健康、文化、建筑等领域，但缺乏购物、餐饮等传统商业业态，夜间经济等空白领域明显。
+    - 配套密度：由于缺乏区域面积数据，无法计算单位面积内商业设施数量，难以对比区域平均水平。
+
+#### 医疗资源分析
+- **数据整合**：
+    - 医院数量：共统计到15家医疗机构，总人数182人，但部分机构人数未查询到。
+    - 等级：有1家三级医院（中南大学岳麓山校区校医院），多家一级及以下医院和卫生服务站。
+    - 床位数：无相关数据。
+    - 重点科室分布：无相关数据。
+    - 距离差异：由于未给出各小区到医院的距离，无法分析。
+- **分类拆解分析**：
+    - 可及性：缺乏各小区到医院的步行/车行时间数据，无法分析。
+    - 层级结构：头部医疗资源（三级医院）仅有1家，基础医疗资源（社区卫生服务站等）相对较多，供给结构基本合理，但可能存在部分区域覆盖不足的情况。
+
+#### 教育资源分析
+- **数据整合**：
+    - 学校数量：共统计到21所学校，总人数91283人，其中小学7所，人数4162人；中学6所，人数9340人；大学8所，人数77781人。
+    - 师资力量：无相关数据。
+    - 升学率：无相关数据。
+    - 招生范围：无相关数据。
+    - 特色教育资源：有网上老年大学湖南校友会、一墨塾日语·韩语·留学·自习室、天星高考等特色教育资源。
+- **分类拆解分析**：
+    - 学段适配：涵盖了小学、中学、大学等全年龄段教育，但幼小衔接、课后托管等配套可能存在缺口。
+    - 质量评估：由于缺乏升学率、师资学历等数据，无法进行质量评估。
+
+#### 居住资源分析
+- **数据整合**：
+    - 小区数量：共统计到15个小区，但总人数显示为0，部分小区人数未查询到。
+    - 人口密度：无相关数据。
+    - 户型结构：无相关数据。
+    - 房价/租金波动趋势：无相关数据。
+    - 居住人口职业结构：无相关数据。
+- **分类拆解分析**：
+    - 居住人口画像：由于缺乏常住人口年龄结构、收入水平等数据，无法进行画像分析。
+    - 社区成熟度：由于缺乏新建/老旧小区占比等数据，无法分析居住配套缺口。
+
+### 资源匹配度分析
+- 以居住人口规模为基准（虽然本次数据中居住人口总人数显示为0，但园区内实际应有居住人口），商业资源方面，目前商业业态不够丰富，难以满足居民的消费需求；医疗资源方面，基础医疗资源相对较多，但头部医疗资源较少，可能无法满足居民的大病就医需求；教育资源丰富，涵盖了全年龄段教育，但可能在幼小衔接、课后托管等方面存在不足；居住资源方面，由于数据缺失，无法准确评估居住资源与其他资源的匹配度。
+- 短板识别：商业资源品类覆盖不足，夜间经济、高端商业等业态缺失；医疗资源中头部医疗资源较少；教育资源在幼小衔接、课后托管等方面可能存在缺口；居住资源数据缺失严重，无法准确评估。
+
+### 结论输出
+#### 商业资源
+- **核心数据**：共14家公司，总人数246人（部分公司人数未查询），涉及多种类型公司。
+- **现状评估**：商业业态不够丰富，缺乏购物、餐饮等传统商业业态，夜间经济等存在空白。
+- **潜在优化点**：引入购物、餐饮等商业业态，发展夜间经济，丰富商业品类。
+
+#### 医疗资源
+- **核心数据**：15家医疗机构，总人数182人（部分机构人数未查询），有1家三级医院。
+- **现状评估**：基础医疗资源相对较多，头部医疗资源较少，可能存在部分区域覆盖不足。
+- **潜在优化点**：适当增加大型综合医院等头部医疗资源，优化医疗资源布局。
+
+#### 教育资源
+- **核心数据**：21所学校，总人数91283人，涵盖小学、中学、大学。
+- **现状评估**：教育资源丰富，但幼小衔接、课后托管等配套可能存在缺口。
+- **潜在优化点**：引入专业的幼小衔接机构和课后托管服务。
+
+#### 居住资源
+- **核心数据**：15个小区，总人数显示为0（部分小区人数未查询）。
+- **现状评估**：由于数据缺失，无法准确评估居住资源现状。
+- **潜在优化点**：补充小区人口、户型、房价、租金等数据，以便更好地评估居住资源与其他资源的匹配度。
+
+#### 综合结论
+- **资源密度评分**：商业资源3分，医疗资源4分，教育资源6分，居住资源因数据缺失难以评分。
+- **优势领域**：教育资源丰富，涵盖全年龄段。
+- **待补短板**：商业资源品类不足，医疗资源中头部资源较少，教育资源幼小衔接和课后托管配套不足，居住资源数据缺失。
+- **建议方向**：丰富商业业态，增加头部医疗资源，完善教育配套，补充居住资源数据。 </pre></div></section></div>
+</details><details class="result-card" data-result-card="100001">
+  <summary><span class="result-node-title">开始</span><span class="result-status">运行成功 0.000s</span><span class="result-size">9 字</span></summary>
+  <div class="result-card-body"><section class="result-section"><h4>输入</h4><div class="result-kv"><div class="result-key">place</div><pre class="result-value">长沙市后湖艺术园区</pre></div></section></div>
+</details></div>
+</aside>
+<div class="help">按住左键拖动画布 · 滚轮缩放 · 双击带运行状态的节点查看结果 · Ctrl/⌘ + +/- 缩放 · Ctrl/⌘ + 0 适配</div>
+<div class="floatbar"><span>15 节点 · 17 连线 · 10 结果</span><span id="scaleLabel">100%</span><button id="resultToggleBtn" type="button">结果 10</button><button id="zoomOutBtn" type="button">-</button><button id="zoomInBtn" type="button">+</button><button id="resetBtn" type="button">适配</button><button id="fitBtn" type="button">居中</button></div>
+<script src="./workflow.js"></script></body></html>

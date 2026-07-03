@@ -1,0 +1,1521 @@
+{
+  "source": "workflow\\get_people_num - 工作流 -智能体平台.html",
+  "nodes": [
+    {
+      "id": "100001",
+      "type": "node",
+      "kind": "start",
+      "x": 0.0,
+      "y": 500.8,
+      "z": 9,
+      "title": "开始",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "▶",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "place",
+              "type": "str"
+            },
+            {
+              "name": "type",
+              "type": "str"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 43.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "192979",
+      "type": "node",
+      "kind": "processor",
+      "x": 1740.0,
+      "y": 818.0,
+      "z": 10,
+      "title": "文本处理",
+      "description": "",
+      "headerBg": "#eef4fe",
+      "icon": "◇",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "String1",
+              "type": "{}"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "112351",
+      "type": "node",
+      "kind": "processor",
+      "x": 820.0,
+      "y": 475.15,
+      "z": 11,
+      "title": "选择器",
+      "description": "",
+      "headerBg": "#ebf9f9",
+      "icon": "◇",
+      "sections": [
+        {
+          "label": "如果",
+          "items": [
+            {
+              "name": "开始 - type 学校"
+            }
+          ]
+        },
+        {
+          "label": "否则",
+          "items": []
+        }
+      ],
+      "ports": [
+        {
+          "kind": "out",
+          "x": 0.0,
+          "y": 0.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 0.0,
+          "y": 0.0,
+          "linked": true
+        },
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 68.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "1828405",
+      "type": "node",
+      "kind": "llm",
+      "x": 2660.0,
+      "y": 923.6,
+      "z": 12,
+      "title": "整合地点结果",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "✦",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "input",
+              "type": "str"
+            },
+            {
+              "name": "type",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "{}"
+            }
+          ]
+        },
+        {
+          "label": "模型",
+          "items": [
+            {
+              "name": "豆包·1.5·Pro·32k"
+            }
+          ]
+        },
+        {
+          "label": "技能",
+          "items": [
+            {
+              "name": "未配置技能"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 82.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 82.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "1720577",
+      "type": "node",
+      "kind": "llm",
+      "x": 3680.0,
+      "y": 923.6,
+      "z": 13,
+      "title": "整合后数量",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "✦",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "place_info",
+              "type": "brace"
+            },
+            {
+              "name": "type",
+              "type": "str"
+            },
+            {
+              "name": "place",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "outputList",
+              "type": "{}"
+            }
+          ]
+        },
+        {
+          "label": "模型",
+          "items": [
+            {
+              "name": "豆包·1.5·Pro·32k"
+            }
+          ]
+        },
+        {
+          "label": "技能",
+          "items": [
+            {
+              "name": "WebPilot"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 82.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 82.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "900001",
+      "type": "node",
+      "kind": "end",
+      "x": 6080.0,
+      "y": 686.4,
+      "z": 14,
+      "title": "结束",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "✓",
+      "sections": [
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出类型",
+          "items": [
+            {
+              "name": "返回变量"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "103012",
+      "type": "node",
+      "kind": "llm",
+      "x": 5160.0,
+      "y": 0.0,
+      "z": 15,
+      "title": "学校人数整合",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "✦",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "info",
+              "type": "str[]"
+            },
+            {
+              "name": "type",
+              "type": "str"
+            },
+            {
+              "name": "place",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "模型",
+          "items": [
+            {
+              "name": "豆包·1.5·Pro·32k"
+            }
+          ]
+        },
+        {
+          "label": "技能",
+          "items": [
+            {
+              "name": "简易计算器"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 82.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 82.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "132161",
+      "type": "node",
+      "kind": "processor",
+      "x": 4700.0,
+      "y": 26.0,
+      "z": 16,
+      "title": "students数量处理-转字符串",
+      "description": "",
+      "headerBg": "#eef4fe",
+      "icon": "◇",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "String1",
+              "type": "str[]"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "1031607",
+      "type": "node",
+      "kind": "processor",
+      "x": 4700.0,
+      "y": 949.6,
+      "z": 17,
+      "title": "人数数量处理-转字符串",
+      "description": "",
+      "headerBg": "#eef4fe",
+      "icon": "◇",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "String1",
+              "type": "{}"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "127916",
+      "type": "node",
+      "kind": "workflow",
+      "x": 1280.0,
+      "y": 806.0,
+      "z": 18,
+      "title": "search_around",
+      "description": "路线规划类插件，可以帮助用户规划路线、搜索附近相关地点",
+      "headerBg": "#fbf2ff",
+      "icon": "⌘",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "address",
+              "type": "str"
+            },
+            {
+              "name": "keyword",
+              "type": "str"
+            },
+            {
+              "name": "count",
+              "type": "number_int"
+            },
+            {
+              "name": "offset",
+              "type": "number_int"
+            },
+            {
+              "name": "radius",
+              "type": "number_int"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "code",
+              "type": "num"
+            },
+            {
+              "name": "data",
+              "type": "brace"
+            },
+            {
+              "name": "log_id",
+              "type": "str"
+            },
+            {
+              "name": "msg",
+              "type": "str"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 68.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 68.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "1551773",
+      "type": "node",
+      "kind": "llm",
+      "x": 2660.0,
+      "y": 660.4,
+      "z": 19,
+      "title": "整合医院结果",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "✦",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "input",
+              "type": "str"
+            },
+            {
+              "name": "type",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "{}"
+            }
+          ]
+        },
+        {
+          "label": "模型",
+          "items": [
+            {
+              "name": "豆包·1.5·Pro·32k"
+            }
+          ]
+        },
+        {
+          "label": "技能",
+          "items": [
+            {
+              "name": "未配置技能"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 82.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 82.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "1862423",
+      "type": "node",
+      "kind": "llm",
+      "x": 3680.0,
+      "y": 660.4,
+      "z": 20,
+      "title": "医院类型及数量",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "✦",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "place_name",
+              "type": "str"
+            },
+            {
+              "name": "type",
+              "type": "str"
+            },
+            {
+              "name": "place",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "outputList",
+              "type": "{}"
+            }
+          ]
+        },
+        {
+          "label": "模型",
+          "items": [
+            {
+              "name": "豆包·1.5·Pro·32k"
+            }
+          ]
+        },
+        {
+          "label": "技能",
+          "items": [
+            {
+              "name": "WebPilot"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 82.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 82.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "1089975",
+      "type": "node",
+      "kind": "processor",
+      "x": 4700.0,
+      "y": 686.4,
+      "z": 21,
+      "title": "数量处理-转字符串_1",
+      "description": "",
+      "headerBg": "#eef4fe",
+      "icon": "◇",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "String1",
+              "type": "{}"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "116500",
+      "type": "node",
+      "kind": "processor",
+      "x": 5620.0,
+      "y": 685.4,
+      "z": 22,
+      "title": "变量聚合",
+      "description": "",
+      "headerBg": "#ebf9f9",
+      "icon": "◇",
+      "sections": [],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 57.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 57.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "1623650",
+      "type": "node",
+      "kind": "llm",
+      "x": 5160.0,
+      "y": 660.4,
+      "z": 23,
+      "title": "医院人数整合",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "✦",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "info",
+              "type": "str"
+            },
+            {
+              "name": "type",
+              "type": "str"
+            },
+            {
+              "name": "place",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "模型",
+          "items": [
+            {
+              "name": "豆包·1.5·Pro·32k"
+            }
+          ]
+        },
+        {
+          "label": "技能",
+          "items": [
+            {
+              "name": "简易计算器"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 82.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 82.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "172610",
+      "type": "node",
+      "kind": "processor",
+      "x": 2200.0,
+      "y": 805.35,
+      "z": 24,
+      "title": "选择器_1",
+      "description": "",
+      "headerBg": "#ebf9f9",
+      "icon": "◇",
+      "sections": [
+        {
+          "label": "如果",
+          "items": [
+            {
+              "name": "开始 - type 医院"
+            }
+          ]
+        },
+        {
+          "label": "否则",
+          "items": []
+        }
+      ],
+      "ports": [
+        {
+          "kind": "out",
+          "x": 0.0,
+          "y": 0.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 0.0,
+          "y": 0.0,
+          "linked": true
+        },
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 68.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "1010692",
+      "type": "node",
+      "kind": "llm",
+      "x": 5160.0,
+      "y": 923.6,
+      "z": 25,
+      "title": "其他",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "✦",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "info",
+              "type": "str"
+            },
+            {
+              "name": "type",
+              "type": "str"
+            },
+            {
+              "name": "place",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "模型",
+          "items": [
+            {
+              "name": "豆包·1.5·Pro·32k"
+            }
+          ]
+        },
+        {
+          "label": "技能",
+          "items": [
+            {
+              "name": "简易计算器"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 82.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 82.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "197703",
+      "type": "node",
+      "kind": "processor",
+      "x": 3680.0,
+      "y": 26.0,
+      "z": 26,
+      "title": "批处理",
+      "description": "",
+      "headerBg": "#ebf9f9",
+      "icon": "◇",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "school_list",
+              "type": "str[]"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str[]"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "out",
+          "x": 0.0,
+          "y": 0.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 0.0,
+          "y": 0.0,
+          "linked": true
+        },
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "BatchFunction_197703",
+      "type": "subcanvas",
+      "kind": "subcanvas",
+      "x": 2760.0,
+      "y": 217.2,
+      "z": 27,
+      "title": "批处理体",
+      "headerBg": "#ebf9f9",
+      "icon": "◇",
+      "width": 1875.0,
+      "height": 323.3
+    },
+    {
+      "id": "122049",
+      "type": "node",
+      "kind": "llm",
+      "x": 3320.0,
+      "y": 317.2,
+      "z": 29,
+      "title": "整合学校结果",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "✦",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "input",
+              "type": "{}"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str[]"
+            }
+          ]
+        },
+        {
+          "label": "模型",
+          "items": [
+            {
+              "name": "豆包·1.5·Pro·32k"
+            }
+          ]
+        },
+        {
+          "label": "技能",
+          "items": [
+            {
+              "name": "未配置技能"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 82.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 82.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "1488446",
+      "type": "node",
+      "kind": "workflow",
+      "x": 2860.0,
+      "y": 331.2,
+      "z": 30,
+      "title": "search_around_1",
+      "description": "路线规划类插件，可以帮助用户规划路线、搜索附近相关地点",
+      "headerBg": "#fbf2ff",
+      "icon": "⌘",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "address",
+              "type": "str"
+            },
+            {
+              "name": "keyword",
+              "type": "str"
+            },
+            {
+              "name": "count",
+              "type": "number_int"
+            },
+            {
+              "name": "offset",
+              "type": "number_int"
+            },
+            {
+              "name": "radius",
+              "type": "number_int"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "code",
+              "type": "num"
+            },
+            {
+              "name": "data",
+              "type": "brace"
+            },
+            {
+              "name": "log_id",
+              "type": "str"
+            },
+            {
+              "name": "msg",
+              "type": "str"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 68.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 68.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "155386",
+      "type": "node",
+      "kind": "workflow",
+      "x": 3780.0,
+      "y": 343.2,
+      "z": 31,
+      "title": "get_students_num",
+      "description": "",
+      "headerBg": "#ebf9f0",
+      "icon": "⌘",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "school_list",
+              "type": "str[]"
+            },
+            {
+              "name": "type",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "158000",
+      "type": "node",
+      "kind": "processor",
+      "x": 4175.0,
+      "y": 345.99,
+      "z": 32,
+      "title": "文本处理_1",
+      "description": "",
+      "headerBg": "#eef4fe",
+      "icon": "◇",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "String1",
+              "type": "str[]"
+            },
+            {
+              "name": "String2",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "x": 3208.0,
+      "y": 386.85,
+      "width": 124.0,
+      "height": 24.0,
+      "paths": [
+        "M22 12 C 62 12,62 12, 102 12",
+        "M 96,6 L 102,12 L 96,18"
+      ]
+    },
+    {
+      "id": "e2",
+      "x": 3668.0,
+      "y": 386.85,
+      "width": 124.0,
+      "height": 24.0,
+      "paths": [
+        "M22 12 C 62 12,62 12, 102 12",
+        "M 96,6 L 102,12 L 96,18"
+      ]
+    },
+    {
+      "id": "e3",
+      "x": 2748.03,
+      "y": 386.83,
+      "width": 123.97358741129756,
+      "height": 24.020168735475863,
+      "paths": [
+        "M22 12 C 61.98679370564878 12,61.98679370564878 12.020168735475863, 101.97358741129756 12.020168735475863",
+        "M 95.97358741129756,6.020168735475863 L 101.97358741129756,12.020168735475863 L 95.97358741129756,18.020168735475863"
+      ]
+    },
+    {
+      "id": "e4",
+      "x": 4128.0,
+      "y": 386.85,
+      "width": 59.0,
+      "height": 26.789928601614292,
+      "paths": [
+        "M22 12 C 29.5 12,29.5 14.789928601614292, 37 14.789928601614292",
+        "M 31,8.789928601614292 L 37,14.789928601614292 L 31,20.789928601614292"
+      ]
+    },
+    {
+      "id": "e5",
+      "x": 4523.0,
+      "y": 386.83,
+      "width": 124.02655497401156,
+      "height": 26.810097337090156,
+      "paths": [
+        "M22 14.810097337090156 C 62.013277487005325 14.810097337090156,62.013277487005325 12, 102.02655497401156 12",
+        "M 96.02655497401156,6 L 102.02655497401156,12 L 96.02655497401156,18"
+      ]
+    },
+    {
+      "id": "e6",
+      "x": 348.0,
+      "y": 531.5,
+      "width": 484.0,
+      "height": 24.049999999999955,
+      "paths": [
+        "M22 12 C 242 12,242 12.049999999999955, 462 12.049999999999955",
+        "M 456,6.0499999999999545 L 462,12.049999999999955 L 456,18.049999999999955"
+      ]
+    },
+    {
+      "id": "e7",
+      "x": 1628.0,
+      "y": 861.65,
+      "width": 124.0,
+      "height": 24.0,
+      "paths": [
+        "M22 12 C 62 12,62 12, 102 12",
+        "M 96,6 L 102,12 L 96,18"
+      ]
+    },
+    {
+      "id": "e8",
+      "x": 2088.0,
+      "y": 861.65,
+      "width": 124.0,
+      "height": 24.100000000000023,
+      "paths": [
+        "M22 12 C 62 12,62 12.100000000000023, 102 12.100000000000023",
+        "M 96,6.100000000000023 L 102,12.100000000000023 L 96,18.100000000000023"
+      ]
+    },
+    {
+      "id": "e9",
+      "x": 1168.31,
+      "y": 69.65,
+      "width": 2523.6949623713213,
+      "height": 486.88920703297777,
+      "paths": [
+        "M22 474.88920703297777 C 1261.8474811856609 474.88920703297777,1261.8474811856609 12, 2501.6949623713213 12",
+        "M 2495.6949623713213,6 L 2501.6949623713213,12 L 2495.6949623713213,18"
+      ]
+    },
+    {
+      "id": "e10",
+      "x": 1168.31,
+      "y": 571.236,
+      "width": 123.69496237132125,
+      "height": 314.41367680717383,
+      "paths": [
+        "M22 12 C 61.84748118566063 12,61.84748118566063 302.41367680717383, 101.69496237132125 302.41367680717383",
+        "M 95.69496237132125,296.41367680717383 L 101.69496237132125,302.41367680717383 L 95.69496237132125,308.41367680717383"
+      ]
+    },
+    {
+      "id": "e11",
+      "x": 2548.31,
+      "y": 901.43,
+      "width": 123.69267600498597,
+      "height": 115.82043693358264,
+      "paths": [
+        "M22 12 C 61.84633800249276 12,61.84633800249276 103.82043693358264, 101.69267600498597 103.82043693358264",
+        "M 95.69267600498597,97.82043693358264 L 101.69267600498597,103.82043693358264 L 95.69267600498597,109.82043693358264"
+      ]
+    },
+    {
+      "id": "e12",
+      "x": 3008.0,
+      "y": 993.25,
+      "width": 684.0,
+      "height": 24.0,
+      "paths": [
+        "M22 12 C 342 12,342 12, 662 12",
+        "M 656,6 L 662,12 L 656,18"
+      ]
+    },
+    {
+      "id": "e13",
+      "x": 4028.0,
+      "y": 993.25,
+      "width": 684.0,
+      "height": 24.0,
+      "paths": [
+        "M22 12 C 342 12,342 12, 662 12",
+        "M 656,6 L 662,12 L 656,18"
+      ]
+    },
+    {
+      "id": "e14",
+      "x": 5968.0,
+      "y": 730.05,
+      "width": 124.0,
+      "height": 24.050000000000068,
+      "paths": [
+        "M22 12 C 62 12,62 12.050000000000068, 102 12.050000000000068",
+        "M 96,6.050000000000068 L 102,12.050000000000068 L 96,18.050000000000068"
+      ]
+    },
+    {
+      "id": "e15",
+      "x": 5048.0,
+      "y": 69.65,
+      "width": 124.0,
+      "height": 24.000000000000014,
+      "paths": [
+        "M22 12 C 62 12,62 12.000000000000014, 102 12.000000000000014",
+        "M 96,6.000000000000014 L 102,12.000000000000014 L 96,18.000000000000014"
+      ]
+    },
+    {
+      "id": "e16",
+      "x": 5508.0,
+      "y": 69.65,
+      "width": 124.0,
+      "height": 684.4,
+      "paths": [
+        "M22 12 C 62 12,62 672.4, 102 672.4",
+        "M 96,666.4 L 102,672.4 L 96,678.4"
+      ]
+    },
+    {
+      "id": "e17",
+      "x": 4027.3,
+      "y": 69.65,
+      "width": 684.7024142944088,
+      "height": 24.0013846208102,
+      "paths": [
+        "M22 12.0013846208102 C 342.3512071472046 12.0013846208102,342.3512071472046 12, 662.7024142944088 12",
+        "M 656.7024142944088,6 L 662.7024142944088,12 L 656.7024142944088,18"
+      ]
+    },
+    {
+      "id": "e18",
+      "x": 5048.0,
+      "y": 993.25,
+      "width": 124.0,
+      "height": 24.0,
+      "paths": [
+        "M22 12 C 62 12,62 12, 102 12",
+        "M 96,6 L 102,12 L 96,18"
+      ]
+    },
+    {
+      "id": "e19",
+      "x": 2548.31,
+      "y": 730.05,
+      "width": 123.69267600498597,
+      "height": 156.68244690656877,
+      "paths": [
+        "M22 144.68244690656877 C 61.84633800249276 144.68244690656877,61.84633800249276 12, 101.69267600498597 12",
+        "M 95.69267600498597,6 L 101.69267600498597,12 L 95.69267600498597,18"
+      ]
+    },
+    {
+      "id": "e20",
+      "x": 3008.0,
+      "y": 730.05,
+      "width": 684.0,
+      "height": 24.0,
+      "paths": [
+        "M22 12 C 342 12,342 12, 662 12",
+        "M 656,6 L 662,12 L 656,18"
+      ]
+    },
+    {
+      "id": "e21",
+      "x": 4028.0,
+      "y": 730.05,
+      "width": 684.0,
+      "height": 24.0,
+      "paths": [
+        "M22 12 C 342 12,342 12, 662 12",
+        "M 656,6 L 662,12 L 656,18"
+      ]
+    },
+    {
+      "id": "e22",
+      "x": 5048.0,
+      "y": 730.05,
+      "width": 124.0,
+      "height": 24.0,
+      "paths": [
+        "M22 12 C 62 12,62 12, 102 12",
+        "M 96,6 L 102,12 L 96,18"
+      ]
+    },
+    {
+      "id": "e23",
+      "x": 5508.0,
+      "y": 730.05,
+      "width": 124.0,
+      "height": 24.0,
+      "paths": [
+        "M22 12 C 62 12,62 12, 102 12",
+        "M 96,6 L 102,12 L 96,18"
+      ]
+    },
+    {
+      "id": "e24",
+      "x": 5508.0,
+      "y": 730.05,
+      "width": 124.0,
+      "height": 287.20000000000005,
+      "paths": [
+        "M22 275.20000000000005 C 62 275.20000000000005,62 12, 102 12",
+        "M 96,6 L 102,12 L 96,18"
+      ]
+    },
+    {
+      "id": "e25",
+      "x": 3685.53,
+      "y": 124.609,
+      "width": 186.4887315554647,
+      "height": 104.57552057834499,
+      "paths": [
+        "M174.4887315554647 22 C 174.4887315554647 52.287760289172496,12 52.287760289172496, 12 82.57552057834499"
+      ]
+    }
+  ],
+  "bounds": {
+    "minX": 0.0,
+    "minY": 0.0,
+    "width": 6520.0,
+    "height": 1169.6
+  }
+}

@@ -1,0 +1,483 @@
+{
+  "source": "workflow\\get_traffic_info - 工作流 -智能体平台.html",
+  "nodes": [
+    {
+      "id": "100001",
+      "type": "node",
+      "kind": "start",
+      "x": 0.0,
+      "y": 212.375,
+      "z": 9,
+      "title": "开始",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "▶",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "place",
+              "type": "str"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 43.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "900001",
+      "type": "node",
+      "kind": "end",
+      "x": 1840.0,
+      "y": 117.425,
+      "z": 10,
+      "title": "结束",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "✓",
+      "sections": [
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出类型",
+          "items": [
+            {
+              "name": "返回变量"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "102851",
+      "type": "node",
+      "kind": "processor",
+      "x": 0.0,
+      "y": 397.575,
+      "z": 11,
+      "title": "选择器",
+      "description": "",
+      "headerBg": "#ebf9f9",
+      "icon": "◇",
+      "sections": [
+        {
+          "label": "如果",
+          "items": [
+            {
+              "name": "- 近郊 或 - 远郊"
+            }
+          ]
+        },
+        {
+          "label": "否则",
+          "items": []
+        }
+      ],
+      "ports": [
+        {
+          "kind": "out",
+          "x": 0.0,
+          "y": 0.0,
+          "linked": false
+        },
+        {
+          "kind": "out",
+          "x": 0.0,
+          "y": 0.0,
+          "linked": false
+        },
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 92.0,
+          "linked": false
+        }
+      ]
+    },
+    {
+      "id": "188962",
+      "type": "node",
+      "kind": "processor",
+      "x": 920.0,
+      "y": 117.425,
+      "z": 12,
+      "title": "文本处理",
+      "description": "",
+      "headerBg": "#eef4fe",
+      "icon": "◇",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "String1",
+              "type": "{}"
+            },
+            {
+              "name": "String2",
+              "type": "{}"
+            },
+            {
+              "name": "String3",
+              "type": "{}"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "137961",
+      "type": "node",
+      "kind": "llm",
+      "x": 1380.0,
+      "y": 91.425,
+      "z": 13,
+      "title": "总结",
+      "description": "",
+      "headerBg": "#f2f2ff",
+      "icon": "✦",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "input",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "output",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "模型",
+          "items": [
+            {
+              "name": "豆包·1.5·Pro·32k"
+            }
+          ]
+        },
+        {
+          "label": "技能",
+          "items": [
+            {
+              "name": "未配置技能"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 82.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 82.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "152451",
+      "type": "node",
+      "kind": "processor",
+      "x": 460.0,
+      "y": -7.10543e-15,
+      "z": 14,
+      "title": "公共交通",
+      "description": "",
+      "headerBg": "#ebf9f0",
+      "icon": "◇",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "place",
+              "type": "str"
+            },
+            {
+              "name": "type",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "outputList",
+              "type": "{}"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "1312481",
+      "type": "node",
+      "kind": "processor",
+      "x": 460.0,
+      "y": 211.2,
+      "z": 15,
+      "title": "国道、省道、县道、村道",
+      "description": "",
+      "headerBg": "#ebf9f0",
+      "icon": "◇",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "place",
+              "type": "str"
+            },
+            {
+              "name": "type",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "outputList",
+              "type": "{}"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    },
+    {
+      "id": "1617225",
+      "type": "node",
+      "kind": "processor",
+      "x": 460.0,
+      "y": 422.4,
+      "z": 16,
+      "title": "高铁站、火车站、机场、车站",
+      "description": "",
+      "headerBg": "#ebf9f0",
+      "icon": "◇",
+      "sections": [
+        {
+          "label": "输入",
+          "items": [
+            {
+              "name": "place",
+              "type": "str"
+            },
+            {
+              "name": "type",
+              "type": "str"
+            }
+          ]
+        },
+        {
+          "label": "输出",
+          "items": [
+            {
+              "name": "outputList",
+              "type": "{}"
+            }
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "kind": "in",
+          "x": 0.0,
+          "y": 56.0,
+          "linked": true
+        },
+        {
+          "kind": "out",
+          "x": 360.0,
+          "y": 56.0,
+          "linked": true
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "x": 348.0,
+      "y": 43.65,
+      "width": 124.0,
+      "height": 223.42499999999995,
+      "paths": [
+        "M22 211.42499999999995 C 62 211.42499999999995,62 12, 102 12",
+        "M 96,6 L 102,12 L 96,18"
+      ]
+    },
+    {
+      "id": "e2",
+      "x": 348.0,
+      "y": 243.075,
+      "width": 124.0,
+      "height": 35.775000000000034,
+      "paths": [
+        "M22 12 C 62 12,62 23.775000000000034, 102 23.775000000000034",
+        "M 96,17.775000000000034 L 102,23.775000000000034 L 96,29.775000000000034"
+      ]
+    },
+    {
+      "id": "e3",
+      "x": 348.0,
+      "y": 243.075,
+      "width": 124.0,
+      "height": 246.97500000000002,
+      "paths": [
+        "M22 12 C 62 12,62 234.97500000000002, 102 234.97500000000002",
+        "M 96,228.97500000000002 L 102,234.97500000000002 L 96,240.97500000000002"
+      ]
+    },
+    {
+      "id": "e4",
+      "x": 1728.0,
+      "y": 161.075,
+      "width": 124.0,
+      "height": 24.05000000000001,
+      "paths": [
+        "M22 12 C 62 12,62 12.050000000000011, 102 12.050000000000011",
+        "M 96,6.050000000000011 L 102,12.050000000000011 L 96,18.05000000000001"
+      ]
+    },
+    {
+      "id": "e5",
+      "x": 808.0,
+      "y": 43.65,
+      "width": 124.0,
+      "height": 141.425,
+      "paths": [
+        "M22 12 C 62 12,62 129.425, 102 129.425",
+        "M 96,123.42500000000001 L 102,129.425 L 96,135.425"
+      ]
+    },
+    {
+      "id": "e6",
+      "x": 808.0,
+      "y": 161.075,
+      "width": 124.0,
+      "height": 117.77499999999998,
+      "paths": [
+        "M22 105.77499999999998 C 62 105.77499999999998,62 12, 102 12",
+        "M 96,6 L 102,12 L 96,18"
+      ]
+    },
+    {
+      "id": "e7",
+      "x": 808.0,
+      "y": 161.075,
+      "width": 124.0,
+      "height": 328.97499999999997,
+      "paths": [
+        "M22 316.97499999999997 C 62 316.97499999999997,62 12, 102 12",
+        "M 96,6 L 102,12 L 96,18"
+      ]
+    },
+    {
+      "id": "e8",
+      "x": 1268.0,
+      "y": 161.075,
+      "width": 124.0,
+      "height": 24.0,
+      "paths": [
+        "M22 12 C 62 12,62 12, 102 12",
+        "M 96,6 L 102,12 L 96,18"
+      ]
+    }
+  ],
+  "bounds": {
+    "minX": 0.0,
+    "minY": -7.10543e-15,
+    "width": 2280.0,
+    "height": 620.4
+  }
+}
